@@ -1,0 +1,125 @@
+\documentclass{article}
+
+\usepackage[preprint]{neurips_2019}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+
+\title{ATML Report}
+
+% The \author macro works with any number of authors.
+
+\author{%
+	Giorgia Adorni \\
+		\texttt{giorgia.adorni@usi.ch} \\
+		\And
+		Felix Boelter\\
+		\texttt{felix.boelter@usi.ch}\\
+		\And
+		Stefano Carlo Lambertenghi\\
+		\texttt{stefano.carlo.lambertenghi@usi.ch}\\
+}
+
+\begin{document}
+	
+	\maketitle
+	
+	\begin{abstract}
+		Concise and self-contained description of your project, motivation and main findings.
+	\end{abstract}
+	
+	\section*{General notes}
+	
+	The report should be written as an article intended to present the findings of your work. Your aim 
+	should be to be clear and objective, substantiating your claims with references or 
+	empirical/theoretical evidence.
+	
+	We are well aware of the fact that carrying out machine learning experiments might be difficult and 
+	that often the final performance might be disappointing. For this reason, you will not be evaluated 
+	solely on quantitative aspect of your work, but mainly on the quality of your analysis and report.
+	
+	The length of the report should be between 4 and 8 pages (without considering references).
+	
+	\section{Introduction}
+	
+	Here you should clarify the context of your project and the problem you are dealing with. You 
+	should also make a brief summary of the main results and contributions (i.e., if you tried to replicate 
+	the results of an existing paper you should say if you were successful or not). The introduction 
+	should help the reader to follow along for the rest of the paper.
+	
+	\section{Related works}
+	
+	Give a brief summary of (some) existing methods that are related to you project. For instance, if you 
+	project is about fine tuning a language model for a specific task, here you should give some 
+	examples of successful applications of this approach~\cite{ziegler2020finetuning}. In this section it 
+	is important to provide readers references to the current state of the art and the foundations of the 
+	presented method. 
+	
+	N.B.: When referencing a different approach, it is not necessary to provide a detailed description, 
+	only one/two brief sentences are enough. The interested readers can eventually read the referenced 
+	work. 
+	
+	\section{Methodology (change the name of this section as you see fit)}
+	
+	In this section you should give a description of the methodological aspects of your work, for 
+	instance how you modified an existing method to perform a particular task or to overcome a 
+	particular limitation. If your project is about reproducibility, here you should describe the method 
+	presented in the original paper.
+	
+	\section{Implementation}
+	
+	This section should be structured as follows (from the Reproducibility challenge template):
+	
+	---
+	
+	Briefly describe what you did and which resources did you use. E.g. Did you use author's code, did 
+	you re-implement parts of the pipeline, how much time did it take to produce the results, what 
+	hardware you were using and how long it took to train/evaluate. 
+	
+	\subsection{Datasets}
+	Describe the datasets you used and how you obtained them. 
+	
+	\subsection{Hyperparameters}
+	Describe how you set the hyperparameters and what was the source for their value (e.g. paper, code 
+	or your guess). 
+	
+	\subsection{Experimental setup}
+	Explain how you ran your experiments, e.g. the CPU/GPU resources and provide the link to your 
+	code and notebooks. 
+	
+	\subsection{Computational requirements}
+	Provide information on computational requirements for each of your experiments. For example, the 
+	number of CPU/GPU hours and memory requirements. You'll need to think about this ahead of time, 
+	and write your code in a way that captures this information so you can later add it to this section. 
+	
+	\section{Results}
+	
+	In this section you should report the results of your work (e.g., the outcome of an empirical 
+	analysis). You should be objective and support your statements with empirical evidence.
+	
+	Use figures, plots and tables to present your results in a nice and readable way.
+	
+	Refer to the Reproducibility Challenge template for hints on how to structure this in case you are 
+	trying to replicate someone else's results.
+	
+	\section{Discussion and conclusion}
+	
+	Here you can express your judgments and draw your conclusions based on the  evidences produced 
+	on the previous sections.
+	
+	Try to summarize the achievements of your project and its limits, suggesting (when appropriate) 
+	possible extensions and future works.
+	
+	%%%%
+	
+	\bibliography{main}
+	\bibliographystyle{unsrt}
+	\clearpage
+	
+\end{document}
