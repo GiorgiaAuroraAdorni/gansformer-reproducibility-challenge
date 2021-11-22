@@ -1,3 +1,5 @@
+\PassOptionsToPackage{square,comma,numbers,sort&compress}{natbib}
+
 \documentclass{article}
 
 \usepackage[preprint]{neurips_2019}
@@ -97,6 +99,8 @@
 %	particular limitation. If your project is about reproducibility, here you should describe the method 
 %	presented in the original paper.
 	
+	\subsection{Generative Adversarial Transformers}
+	
 	\section{Implementation}
 %	
 %	This section should be structured as follows (from the Reproducibility challenge template):
@@ -107,6 +111,8 @@
 %	you re-implement parts of the pipeline, how much time did it take to produce the results, what 
 %	hardware you were using and how long it took to train/evaluate. 
 %	
+	The code has been implemented using code and information provided by the authors.
+	
 	\subsection{Datasets}
 	%Describe the datasets you used and how you obtained them. 
 	
@@ -119,8 +125,8 @@
 	However, the time to complete the training was to high on this dataset (TODO: how much?), even if 
 	using computational resources like GPU.
 	
-	For this reason, we switch to another dataset, the Google Cartoon Set\footnote{	
-	\url{https://google.github.io/cartoonset}} \cite{cartoonset}, containing 10k/100k 2D cartoon avatar 
+	For this reason, we switch to another dataset, the Google Cartoon Set \cite{cartoonset}\footnote{	
+		\url{https://google.github.io/cartoonset}}, containing 10k/100k 2D cartoon avatar 
 	images composed of 16 components that vary in 10 artwork attributes, 4 colour attributes, and 4 
 	proportion attributes (see in Table \ref{tab:dataset}). 
 	%TODO what about resolution and size??
@@ -169,16 +175,17 @@
 	%	Explain how you ran your experiments, e.g. the CPU/GPU resources and provide the link to your 
 	%	code and notebooks. 
 	
-	The source code of our work is available her: 
+	The source code of our work is available at the following GitHub repository: 
 	\url{https://github.com/GiorgiaAuroraAdorni/gansformer-reproducibility-challenge}.
 	 
-	 The proposed approach has been implemented in Python. We created a Jupyter Notebook \cite{...}  
-	 which runs all the experiments in a Google Colaboratory \cite{...}.
-	 All the models have been trained on a Tesla P100-PCIE-16GB (GPU) provided by Google 
-	 Colab Pro \cite{...}.
+	 The approaches proposed in both the original paper codebase by \citet{karras2020analyzing} and 
+	 by \citet{hudson2021generative} have been implemented in Python using TensorFlow 
+	 \cite{tensorflow2015-whitepaper}, so, according to that, we used the same setup.
+	 We created a Jupyter Notebook which runs all the experiments in Google Colaboratory, which 
+	 allows us to write and execute Python in the browser.
 	
-	The model have been implemented in TensorFlow \cite{...} as in the original paper codebase 
-	introduced by the StyleGAN \cite{...} and GANformer \cite{...} authors.
+	 All the models have been trained on a Tesla P100-PCIE-16GB (GPU) provided by Google 
+	 Colab Pro.
 	
 	\subsection{Computational requirements}
 	%	Provide information on computational requirements for each of your experiments. For example, 
@@ -211,7 +218,7 @@
 	%%%%
 	\nocite{*} %TODO remove
 	\bibliography{bibliography}
-	\bibliographystyle{unsrt}
+	\bibliographystyle{unsrtnat}
 	\clearpage
 	
 \end{document}
