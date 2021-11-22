@@ -12,13 +12,14 @@
 \usepackage{amsfonts}       % blackboard math symbols
 \usepackage{nicefrac}       % compact symbols for 1/2, etc.
 \usepackage{microtype}      % microtypography
+\usepackage[inline]{enumitem}
 
 \title{ATML Report}
 
 % The \author macro works with any number of authors.
 
 \author{%
-	Giorgia Adorni \\
+		Giorgia Adorni \\
 		\texttt{giorgia.adorni@usi.ch} \\
 		\And
 		Felix Boelter\\
@@ -49,30 +50,45 @@
 %	The length of the report should be between 4 and 8 pages (without considering references).
 	
 	\section{Introduction}
+	This project consists in a reproducibility challenge whose objective is to investigate the 
+	reliability and reproducibility of a paper accepted for publication in a top machine learning 
+	conference.
+	The models have been implemented using code and information provided by the authors.	
+	Actually we are not participating formally to the Fall Edition of the ML Reproducibility Challenge 2021.
 	
-%	Here you should clarify the context of your project and the problem you are dealing with. You 
-%	should also make a brief summary of the main results and contributions (i.e., if you tried to 
-%replicate 
-%	the results of an existing paper you should say if you were successful or not). The introduction 
-%	should help the reader to follow along for the rest of the paper.
-%	
+	We selected the paper ``\emph{Generative adversarial transformers}'' by 
+	\citet{hudson2021generative} and verified the empirical results and claims in it by reproducing three 
+	of the computational experiments performed by the authors:
+	\begin{enumerate*}
+		\item[(1)] the \textbf{StyleGAN2} by \citet{karras2020analyzing}, a GAN network which uses one 
+		global latent style vector to modulate the features of each layer, hence to control the style of all 
+		image features globally,
+		\item[(2)] the \textbf{GANformer} with \textbf{Simplex Attention} by 
+		\citet{hudson2021generative}, a generalisation of the StyleGAN design with \textit{k} latent 
+		vectors that cooperate through attention, allowing for a spatially finer control over the generation 
+		process since multiple style vectors impact different regions in the image concurrently, in 
+		particular permitting communication in one direction, in the generative context – from the latents 
+		to the image features, and
+		\item[(3)] the \textbf{GANformer} with \textbf{Duplex Attention} by \citet{hudson2021generative}, 
+		which is based on the same principles as the previous but propagating information both from 
+		global latents to local image features, enabling both top-down and bottom-up reasoning to occur 
+		simultaneously.
+	\end{enumerate*} 
 	
+	The first model is used as baseline, while the remaining are the architectures introduced by the 
+	authors. Thy consider the GANformer has ``a novel and efficient type of transformer'' which 
+	demonstrates its strength and robustness over a range of task of visual generative modelling —  
+	simulated multi-object environments (real-world indoor and out-door scenes) — achieving 
+	state-of-the-art results in terms of both image quality and diversity, while benefiting from fast 
+	learning and better data-efficiency. 
 	
-	\section{Related works}
-	
-%	Give a brief summary of (some) existing methods that are related to you project. For instance, if 
-%you 
-%	project is about fine tuning a language model for a specific task, here you should give some 
-%	examples of successful applications of this approach~\cite{hudson2021generative}. In this section 
-%it 
-%	is important to provide readers references to the current state of the art and the foundations of 
-%the 
-%	presented method. 
-%	
-%	N.B.: When referencing a different approach, it is not necessary to provide a detailed description, 
-%	only one/two brief sentences are enough. The interested readers can eventually read the 
-%referenced 
-%	work. 
+	% summary of the main results and contributions
+
+
+	\section{Related works}	
+	\subsection{GAN}
+	\subsection{StyleGAN2}
+	\subsection{Transformers}
 	
 	\section{Methodology (change the name of this section as you see fit)}
 	
