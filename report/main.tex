@@ -272,6 +272,150 @@
 	%	presented in the original paper.
 	
 	\subsection{Generative Adversarial Transformers}
+	\cite{hudson2021generative}
+	
+	a simple yet effective generalization of the vanilla transformer, explored here for the task of visual 
+	synthesis. 
+	
+	The model utilizes a bipartite structure for computing soft attention, that iteratively aggre- gates 
+	and disseminates information between the generated image features and a compact set of latent 
+	variables that function as a bottleneck, to enable bidirectional interaction between these dual 
+	representations. 
+	
+	Bipartite Attention. We introduce the GANformer network, that leverages a bipartite structure to 
+	allow long-range interactions, while evading the quadratic complexity which standard transformers 
+	suffer from. We present two novel attention operations over the bipartite graph: simplex and duplex, 
+	the former permits communication in one direction, in the generative context – from the latents to 
+	the image features, while the latter enables both top-down and bottom up connections between 
+	these two dual representations.
+	between the image features and a small collection of latent variables.
+	
+	The Generative Adversarial Transformer (GANformer) is a type of Generative Adversarial Network, 
+	which involves a generator network (G) that maps a sample from the latent space to the output 
+	space (e.g. an image), and a discriminator network (D) which seeks to discern between real and 
+	fake samples [28]. The two networks compete with each other through a minimax game until 
+	reaching an equilibrium. Typically, each of these networks consists of multiple layers of 
+	convolution, but in the GANformer case, we instead construct them using a novel architecture, 
+	called Bipartite Transformer, formally defined below.
+	
+	The standard transformer network is composed of alternating multi-head self-attention and 
+	feed-forward layers. We refer to each pair of self-attention and feed-forward layers as a transformer 
+	layer, such that a transformer is considered to be a stack of several such layers. The Self-Attention 
+	layer considers all pairwise relations among the input elements, so to update each single element by 
+	attending to all the others. The Bipartite Transformer generalizes this formulation, featuring 
+	instead a bipartite graph between two groups of variables – in the GAN case, latents and image 
+	features. In the following, we consider two forms of attention that could be computed over the 
+	bipartite graph – Simplex attention, and Duplex attention, depending on the direction in which 
+	information propagates3 – either in one way only, from the latents to the image, or both in 
+	top-down and bottom-up ways. While for clarity purposes, we present the technique here in its 
+	one-head version, in practice we make use of a multi-head variant, in accordance with [64].
+	
+	\subsubsection{Simplex attention}
+	We begin by introducing the simplex attention, which distributes information in a single direction 
+	over the bipartite transformer graph. Formally, let $X^{n\times d}$ denote an input set of $n$ 
+	vectors of dimension $d$ (where, for the image case, $n = W\times H$), and $Y^{m\times d}$ 
+	denote a set of $m$ aggregator variables (the latents, in the generative case). We can then compute 
+	attention over the derived bipartite graph between these two groups of elements. Specifically, we 
+	define the attention as in Equation \eqref{eqn:attention}, moreover:
+	\begin{equation}
+		\label{eqn:attention2}
+		a(X,Y)=\mathsf{Attention}(q(X), k(Y), v(Y))
+	\end{equation}
+	where $q(\cdot), k(\cdot), v(\cdot)$ are functions that respectively map elements into queries, 
+	keys, and values, all maintaining dimensionality $d$. We also provide the mappings with positional 
+	encodings, to reflect the distinct position of each element (e.g. in the image). Note that this bipratite 
+	attention is a generalization of self-attention, where $Y = X$.
+	
+	We can then integrate the attended information with the input elements $X$, but whereas the 
+	standard transformer implements an additive update rule of the form:
+	\begin{equation}
+		\label{eqn:layernorm}
+		u^a(X, Y )=\mathsf{LayerNorm}(X + a(X, Y ))
+	\end{equation}
+	we instead use the retrieved information to control both the scale as well as the bias of the elements 
+	in $X$, in line with the practice promoted by the StyleGAN model \cite{karras2019style}. As our 
+	experiments indicate, such multiplicative integration enables significant gains in the model 
+	performance. Formally:
+	\begin{equation}
+		\label{eqn:simplex}
+		u^s(X, Y )=\gamma (a(X, Y )) \odot \omega (X) + \beta (a(X, Y ))
+	\end{equation}
+
+	Where $\gamma(\cdot), \beta(\cdot)$ are mappings that compute multiplicative and additive styles 
+	(gain and bias), maintaining a dimension of $d$, and $\omega (X) = X- \mu(X)$ normalizes each 
+	element with $\sigma(X)$ respect to the other features. By normalizing $X$ (image features), and 
+	then letting $Y$ (latents) control the statistical tendencies of $X$, we essentially enable information 
+	propagation from $Y$ to $X$, intuitively, allowing the latents to control the visual generation of 
+	spatial attended regions within the image, so as to guide the synthesis of objects or entities.
+	
+	\subsubsection{Duplex attention}
+	
+	We can go further and consider the variables $Y$ to poses a key-value structure of their own: $Y = 
+	(K^{n\times d} , V^{n\times d})$, where the values store the content of the $Y$ variables, as before 
+	(e.g. the randomly sampled latent vectors in the case of GANs) while the keys track the centroids 
+	$K$ of the attention-based assignments between $Y$ and $X$, which can be computed as $K = a(Y, 
+	X)$ — namely, the weighted averages of the $X$ elements using the bipartite attention distribution 
+	derived through comparing it to $Y$. Consequently, we can define a new update rule:
+	\begin{equation}
+		\label{eqn:duplex}
+		u^d(X, Y )=\gamma (A(X, K, V)) \odot \omega (X) + \beta (A(X, K, V))
+	\end{equation}
+	This update compounds two attention operations on top of each other: where we first (1) compute 
+	soft attention assignments between $X$ and $Y$, by $K = a(Y, X)$, and then (2) refine the 
+	assignments by considering their centroids, by $A(X, K, V)$. This is analogous to the k-means 
+	algorithm and works more effectively than the simpler update $u^a$ defined above in Equation 
+	\eqref{eqn:simplex}.
+	
+	Finally, to support bidirectional interaction between $X$ and $Y$ (the image and the latents), we can 
+	chain two reciprocal simplex attentions from $X$ to $Y$ and from $Y$ to $X$, obtaining the duplex 
+	attention, which alternates computing $Y :=u^a(Y,X)$ and $X:=u^d(X,Y)$, such that each 
+	representation is refined in light of its interaction with the other, integrating together bottom-up and 
+	top-down interactions.
+	
+	\subsubsection{Vision-Specific adaptations}
+	A \textit{kernel size} of $k = 3$ is used after each application of the attention, together with a 
+	\textit{Leaky ReLU non-linearity} after each convolution and then upsample or downsample the 
+	features $X$, as part of the generator or discriminator respectively, as in e.g. StyleGAN2 
+	\cite{karras2020analyzing}. 
+	To account for the features location within the image, we use a sinusoidal positional encoding along 
+	the horizontal and vertical dimensions for the visual features $X$, and trained positional 
+	embeddings for the set of latent variables $Y$.
+	Overall, the bipartite transformer is thus composed of a stack that alternates attention (simplex or 
+	duplex), convolution, and upsampling layers, starting from a $4 \times 4$ grid up to the desirable 
+	resolution. 
+	
+	Conceptually, this structure fosters an interesting communication flow: rather than densely 
+	modelling interactions among all the pairs of pixels in the images, it supports adaptive long-range 
+	interaction between far away pixels in a moderated manner, passing through a compact and global 
+	latent bottleneck that selectively gathers information from the entire input and distributes it back to 
+	the relevant regions. Intuitively, this form can be viewed as analogous to the top-down / bottom-up 
+	notions discussed in section 1, as information is propagated in the two directions, both from the 
+	local pixel to the global high-level representation and vice versa.
+	
+	Both the simplex and the duplex attention operations enjoy a bilinear efficiency of 
+	$\mathcal{O}(mn)$ thanks to the network’s bipartite structure that considers all pairs of 
+	corresponding elements from $X$ and $Y$. Since, as we see below, we maintain $Y$ to be of a fairly 
+	small size, choosing m in the range of 8–32, this compares favourably to the prohibitive 	
+	$\mathcal{O}(n^2)$  complexity of self-attention, which impedes its applicability to high-resolution 
+	images.
+	
+	To recapitulate the discussion above, the GANformer successfully unifies the GAN and Transformer 
+	architectures for the task of scene generation. Compared to traditional GANs and transformers, it 
+	introduces multiple key innovations:
+	\begin{itemize}
+		\item Compositional Latent Space with multiple variables that coordinate through attention to 
+		produce the image cooperatively, in a manner that matches the inherent compositionality of 
+		natural scenes.
+		\item Bipartite Structure that balances between expressiveness and efficiency, modelling 
+		long-range dependencies while maintaining linear computational costs.
+		\item Bidirectional Interaction between the latents and the visual features, which allows the 
+		refinement and interpretation of each in light of the other.
+		\item Multiplicative Integration rule to impact the features' visual style more flexibly, akin to 
+		StyleGAN but in contrast to the transformer network.
+	\end{itemize}
+	As we see in the following section, the combination of these design choices yields a strong 
+	architecture that demonstrates high efficiency, improved latent space disentanglement, and 
+	enhanced transparency of its generation process.
 	
 	\section{Implementation}
 	%	This section should be structured as follows (from the Reproducibility challenge template):
