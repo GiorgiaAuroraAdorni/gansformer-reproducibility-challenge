@@ -194,6 +194,9 @@
 	%	Describe how you set the hyperparameters and what was the source for their value (e.g. paper, 
 	%	code or your guess). 
 	
+	Note that in the code provided by the author \cite{hudson2021generative}, the hyper-parameters are 
+	not the same mentioned in the article. 
+	
 	\subsection{Experimental setup}	
 	The source code of our work is available at the following GitHub repository: 
 	\url{https://github.com/GiorgiaAuroraAdorni/gansformer-reproducibility-challenge}.
@@ -212,9 +215,41 @@
 	%   the  number of CPU/GPU hours and memory requirements. You'll need to think about this ahead 
 	%	of time, and write your code in a way that captures this information so you can later add it to 
 	%	this section. 
+	In the original paper \cite{hudson2021generative}, they evaluate all models under comparable 
+	conditions of training scheme, model size, and optimization details, implementing all the models 
+	within the codebase introduced by the Style-GAN authors \cite{karras2020analyzing}. 
+	All models have been trained with images of 256 × 256 resolution and for the 
+	same number of training steps, roughly spanning a week on 2 NVIDIA V100 GPUs per model (or 
+	equivalently 3-4 days using 4 GPUs). 
 	
-	stylegan2 2 hours and 30 minutes for the training 
+	Considered that we had available just one GPU and not enough time to reproduce this settings, we 
+	decided to resize the images from 256×256 to 64x64 resolution.
 	
+	
+	For the GANformer, we select k–the number of latent variables, from the range of 8–32. 
+	
+	All models have been trained for the same number of steps, which ranges between 5k to 15k kimg 
+	training samples. 
+	
+	The paper present results after training 100k, 200k, 500k, 1m, 2m, 5m and 10m samples
+	
+	For the StyleGAN2 model we present results after training 100k (2h30m), 200k (6h), 500k, obtaining 
+	good results.
+	Note that the original StyleGAN2 model has been trained by its authors \cite{karras2020analyzing} 
+	for up to 70k kimg samples, which is expected to take over 90 GPU-days for a single model. 
+	
+
+	For the GANformer, the authors \cite{karras2020analyzing} show impressive results, especially when 
+	using duplex attention: the model manages to learn a lot faster than competing approaches, 
+	generating astonishing images early in the training. This model is expected to take 4 GPU-days.
+	
+	However, we are not able to replicate this achievements, first because this model learns significantly 
+	slower than the StyleGAN2, which is instead able to produce high-quality images in approximately 
+	x-times less training steps than the GANformer.
+	
+	
+	(in the paper they reach better results with the GANformer with 3-times less training steps than the 
+	StyleGAN2, but they don't specify the time required for this training steps...)
 
 	\section{Results}
 	%	In this section you should report the results of your work (e.g., the outcome of an empirical 
@@ -224,6 +259,20 @@
 	%	
 	%	Refer to the Reproducibility Challenge template for hints on how to structure this in case you are 
 	%	trying to replicate someone else's results.
+	
+	They evaluate the models along commonly used metrics such as FID, IS, and Precision \& Recall 
+	scores
+	
+	Sample images from different points in training are based on the same sampled latent vectors, 
+	thereby showing how the image evolves during the training.
+	
+	
+	For CLEVR and Cityscapes, we present results after training to generate 100k, 200k, 500k, 1m, and 
+	2m samples. For the Bedroom case, we present results after 500k, 1m, 2m, 5m and 10m generated 
+	samples during training
+	
+	These results show how the GANformer, especially when using duplex attention, manages to learn a 
+	lot faster than competing approaches, generating impressive images early in the training
 	
 	\section{Discussion and conclusion}
 	%	Here you can express your judgments and draw your conclusions based on the  evidences 
