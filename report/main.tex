@@ -5,23 +5,21 @@
 \usepackage[preprint]{neurips_2019}
 
 \usepackage[utf8]{inputenc} % allow utf-8 input
-\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
-\usepackage{hyperref}       % hyperlinks
-\usepackage{url}            % simple URL typesetting
-\usepackage{booktabs}       % professional-quality tables
+\usepackage[T1]{fontenc}      % use 8-bit T1 fonts
+\usepackage{hyperref}      		 % hyperlinks
+\usepackage{url}            			% simple URL typesetting
+\usepackage{booktabs}     		 % professional-quality tables
 \usepackage{tabularx}
 \usepackage{multirow}
-\usepackage{nicefrac}       % compact symbols for 1/2, etc.
-\usepackage{microtype}      % microtypography
+\usepackage{nicefrac}      		  % compact symbols for 1/2, etc.
+\usepackage{microtype}     		% microtypography
 \usepackage[inline]{enumitem}
 \usepackage{amsmath}
-\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{amsfonts}       	 % blackboard math symbols
 \usepackage{bm}
 \usepackage{mathtools} 
 
 \title{ATML Report}
-
-% The \author macro works with any number of authors.
 
 \author{%
 		Giorgia Adorni \\
@@ -39,33 +37,36 @@
 	\maketitle
 	
 	\begin{abstract}
-		Concise and self-contained description of your project, motivation and main findings.
+		%Train a GAN with Transformer-like architecture
+		%Concise and self-contained description of your project, motivation and main findings.
 	\end{abstract}
 	
-%	\section*{General notes}
-%	
-%	The report should be written as an article intended to present the findings of your work. Your aim 
-%	should be to be clear and objective, substantiating your claims with references or 
-%	empirical/theoretical evidence.
-%	
-%	We are well aware of the fact that carrying out machine learning experiments might be difficult and 
-%	that often the final performance might be disappointing. For this reason, you will not be evaluated 
-%	solely on quantitative aspect of your work, but mainly on the quality of your analysis and report.
-%	
-%	The length of the report should be between 4 and 8 pages (without considering references).
+	%	\section*{General notes}
+	%	
+	%	The report should be written as an article intended to present the findings of your work. Your 
+	%	aim should be to be clear and objective, substantiating your claims with references or 
+	%	empirical/theoretical evidence.
+	%	
+	%	We are well aware of the fact that carrying out machine learning experiments might be difficult 
+	%	and that often the final performance might be disappointing. For this reason, you will not be 
+	%	evaluated solely on quantitative aspect of your work, but mainly on the quality of your analysis 
+	%	and report.
+	%	
+	%	The length of the report should be between 4 and 8 pages (without considering references).
 	
 	\section{Introduction}
-	This project consists in a reproducibility challenge whose objective is to investigate the 
-	reliability and reproducibility of a paper accepted for publication in a top machine learning 
-	conference.
+	This objective of this project is to investigate the reliability and reproducibility of a paper accepted 
+	for publication in a top machine learning conference.
 	The models have been implemented using code and information provided by the authors.	
-	Actually we are not participating formally to the Fall Edition of the ML Reproducibility Challenge 2021.
+	Actually we are not participating formally to the \textit{Fall Edition of the ML Reproducibility 
+	Challenge 2021}.
 	
-	We selected the paper ``\emph{Generative adversarial transformers}'' by 
-	\citet{hudson2021generative} and verified the empirical results and claims in it by reproducing three 
-	of the computational experiments performed by the authors:
+	With this work, we are going to verify the empirical results and claims of the paper 
+	``\emph{Generative adversarial transformers}'' by \citet{hudson2021generative}, by reproducing 
+	three of the computational experiments performed by the authors:
 	\begin{enumerate*}
-		\item[(1)] the \textbf{StyleGAN2} by \citet{karras2020analyzing}, a GAN network which uses one 
+		\item[(1)] the \textbf{StyleGAN2} by \citet{karras2020analyzing} \cite{karras2019style}, a GAN 
+		network which uses one 
 		global latent style vector to modulate the features of each layer, hence to control the style of all 
 		image features globally,
 		\item[(2)] the \textbf{GANformer} with \textbf{Simplex Attention} by 
@@ -89,9 +90,9 @@
 	
 	% summary of the main results and contributions
 
-	\section{Related works}	
+	\section{Related works/Background}	
 	
-	\subsection{Generative Adversarial Networks (GANs)}
+	\subsection{Generative Adversarial Networks (GANs)}\label{sec:gan}
 	Generative Adversarial Networks (GANs) \cite{goodfellow2014generative}, are discriminative models 
 	that learn to determine whether a sample is from the model distribution or the data distribution. 
 	
@@ -271,59 +272,54 @@
 	%	particular limitation. If your project is about reproducibility, here you should describe the method 
 	%	presented in the original paper.
 	
-	\subsection{Generative Adversarial Transformers}
-	\cite{hudson2021generative}
+	\subsection{Generative Adversarial Transformers}%TODO fixme	
+	The Generative Adversarial Transformer (GANformer), as presented in \cite{hudson2021generative}, 
+	is a type of GAN, which involves a \textbf{generator network} ($\bm{G}$), that maps a sample from 
+	the latent space to the output space (e.g. an image), and a \textbf{discriminator network}
+	($\bm{D}$) which seeks to discern between real and fake samples. As shown in Section 
+	\ref{sec:gan}, the two networks compete with each other through a minimax game until reaching an 
+	equilibrium. 
 	
-	a simple yet effective generalization of the vanilla transformer, explored here for the task of visual 
-	synthesis. 
+	The main difference between the GANformer and a GAN is that instead of using multiple layers of 
+	convolution they construct them using a \textbf{bipartite transformer}, a structure for computing 
+	soft attention, that iteratively aggregates and disseminates information between the generated 
+	image features and a compact set of latent variables that function as a bottleneck, to enable 
+	bidirectional interaction between these dual representations. 
 	
-	The model utilizes a bipartite structure for computing soft attention, that iteratively aggre- gates 
-	and disseminates information between the generated image features and a compact set of latent 
-	variables that function as a bottleneck, to enable bidirectional interaction between these dual 
-	representations. 
+	The \textbf{transformer network} corresponds to the \textit{multi-layer bidirectional transformer 
+	encoder} described by \citet{devlin2019bert}, which interleaves \textit{multi-head self-attention} and 
+	\textit{feed-forward layers}.
+	Each pair of self-attention and feed-forward layers is intended as a \textit{transformer layer}, hence, 
+	a transformer is a stack of several such layers. 
+	The \textit{self-attention layer} considers all pairwise relations among the input elements, so to 
+	update each single element by attending to all the others. 
+	The \textbf{bipartite transformer} generalises this formulation, featuring instead a bipartite graph 
+	between two groups of variables — in the GAN case, latents and image features. 
+	There are two attention operations that could be computed over the bipartite graph, depending on 
+	the direction in which information propagates, 
+	\begin{enumerate*}
+		\item [(1)] \textbf{simplex attention} permits communication either in one way only, in the 
+		generative context, from the latents to the image features, and
+		\item [(2)] \textbf{duplex attention} which enables it both top-down and bottom-up ways.
+	\end{enumerate*}
 	
-	Bipartite Attention. We introduce the GANformer network, that leverages a bipartite structure to 
-	allow long-range interactions, while evading the quadratic complexity which standard transformers 
-	suffer from. We present two novel attention operations over the bipartite graph: simplex and duplex, 
-	the former permits communication in one direction, in the generative context – from the latents to 
-	the image features, while the latter enables both top-down and bottom up connections between 
-	these two dual representations.
-	between the image features and a small collection of latent variables.
+	\subsubsection{Simplex attention}%TODO fixme
+	As already mentioned, simplex attention distributes information in a single direction over the 
+	bipartite transformer graph. 
 	
-	The Generative Adversarial Transformer (GANformer) is a type of Generative Adversarial Network, 
-	which involves a generator network (G) that maps a sample from the latent space to the output 
-	space (e.g. an image), and a discriminator network (D) which seeks to discern between real and 
-	fake samples [28]. The two networks compete with each other through a minimax game until 
-	reaching an equilibrium. Typically, each of these networks consists of multiple layers of 
-	convolution, but in the GANformer case, we instead construct them using a novel architecture, 
-	called Bipartite Transformer, formally defined below.
+	Formally, let $X^{n\times d}$ denote an input set of $n$ vectors of dimension $d$ (where, for the 
+	image case, $n = W\times H$), and $Y^{m\times d}$ denote a set of $m$ aggregator variables (the 
+	latents, in the generative case). We can then compute attention over the derived bipartite graph 
+	between these two groups of elements. 
 	
-	The standard transformer network is composed of alternating multi-head self-attention and 
-	feed-forward layers. We refer to each pair of self-attention and feed-forward layers as a transformer 
-	layer, such that a transformer is considered to be a stack of several such layers. The Self-Attention 
-	layer considers all pairwise relations among the input elements, so to update each single element by 
-	attending to all the others. The Bipartite Transformer generalizes this formulation, featuring 
-	instead a bipartite graph between two groups of variables – in the GAN case, latents and image 
-	features. In the following, we consider two forms of attention that could be computed over the 
-	bipartite graph – Simplex attention, and Duplex attention, depending on the direction in which 
-	information propagates3 – either in one way only, from the latents to the image, or both in 
-	top-down and bottom-up ways. While for clarity purposes, we present the technique here in its 
-	one-head version, in practice we make use of a multi-head variant, in accordance with [64].
-	
-	\subsubsection{Simplex attention}
-	We begin by introducing the simplex attention, which distributes information in a single direction 
-	over the bipartite transformer graph. Formally, let $X^{n\times d}$ denote an input set of $n$ 
-	vectors of dimension $d$ (where, for the image case, $n = W\times H$), and $Y^{m\times d}$ 
-	denote a set of $m$ aggregator variables (the latents, in the generative case). We can then compute 
-	attention over the derived bipartite graph between these two groups of elements. Specifically, we 
-	define the attention as in Equation \eqref{eqn:attention}, moreover:
+	Specifically, we define the attention as in Equation \eqref{eqn:attention}, moreover:
 	\begin{equation}
 		\label{eqn:attention2}
 		a(X,Y)=\mathsf{Attention}(q(X), k(Y), v(Y))
 	\end{equation}
 	where $q(\cdot), k(\cdot), v(\cdot)$ are functions that respectively map elements into queries, 
 	keys, and values, all maintaining dimensionality $d$. We also provide the mappings with positional 
-	encodings, to reflect the distinct position of each element (e.g. in the image). Note that this bipratite 
+	encodings, to reflect the distinct position of each element (e.g. in the image). Note that this bipartite 
 	attention is a generalization of self-attention, where $Y = X$.
 	
 	We can then integrate the attended information with the input elements $X$, but whereas the 
@@ -332,10 +328,14 @@
 		\label{eqn:layernorm}
 		u^a(X, Y )=\mathsf{LayerNorm}(X + a(X, Y ))
 	\end{equation}
-	we instead use the retrieved information to control both the scale as well as the bias of the elements 
+	
+	We instead use the retrieved information to control both the scale as well as the bias of the 
+	elements 
 	in $X$, in line with the practice promoted by the StyleGAN model \cite{karras2019style}. As our 
 	experiments indicate, such multiplicative integration enables significant gains in the model 
-	performance. Formally:
+	performance. 
+	
+	Formally:
 	\begin{equation}
 		\label{eqn:simplex}
 		u^s(X, Y )=\gamma (a(X, Y )) \odot \omega (X) + \beta (a(X, Y ))
@@ -348,18 +348,20 @@
 	propagation from $Y$ to $X$, intuitively, allowing the latents to control the visual generation of 
 	spatial attended regions within the image, so as to guide the synthesis of objects or entities.
 	
-	\subsubsection{Duplex attention}
+	\subsubsection{Duplex attention}%TODO fixme
+	To explain duplex attention, lets consider the variables $Y$ to poses a key-value structure of their 
+	own: $Y = (K^{n\times d} , V^{n\times d})$, where the values store the content of the $Y$ variables, 
+	as before (e.g. the randomly sampled latent vectors in the case of GANs) while the keys track the 
+	centroids $K$ of the attention-based assignments between $Y$ and $X$, which can be computed 
+	as $K = a(Y, X)$ — namely, the weighted averages of the $X$ elements using the bipartite attention 
+	distribution derived through comparing it to $Y$. 
 	
-	We can go further and consider the variables $Y$ to poses a key-value structure of their own: $Y = 
-	(K^{n\times d} , V^{n\times d})$, where the values store the content of the $Y$ variables, as before 
-	(e.g. the randomly sampled latent vectors in the case of GANs) while the keys track the centroids 
-	$K$ of the attention-based assignments between $Y$ and $X$, which can be computed as $K = a(Y, 
-	X)$ — namely, the weighted averages of the $X$ elements using the bipartite attention distribution 
-	derived through comparing it to $Y$. Consequently, we can define a new update rule:
+	Consequently, we can define a new update rule:
 	\begin{equation}
 		\label{eqn:duplex}
 		u^d(X, Y )=\gamma (A(X, K, V)) \odot \omega (X) + \beta (A(X, K, V))
 	\end{equation}
+
 	This update compounds two attention operations on top of each other: where we first (1) compute 
 	soft attention assignments between $X$ and $Y$, by $K = a(Y, X)$, and then (2) refine the 
 	assignments by considering their centroids, by $A(X, K, V)$. This is analogous to the k-means 
@@ -372,7 +374,7 @@
 	representation is refined in light of its interaction with the other, integrating together bottom-up and 
 	top-down interactions.
 	
-	\subsubsection{Vision-Specific adaptations}
+	\subsubsection{Vision-specific adaptations}%TODO fixme
 	A \textit{kernel size} of $k = 3$ is used after each application of the attention, together with a 
 	\textit{Leaky ReLU non-linearity} after each convolution and then upsample or downsample the 
 	features $X$, as part of the generator or discriminator respectively, as in e.g. StyleGAN2 
@@ -398,6 +400,45 @@
 	small size, choosing m in the range of 8–32, this compares favourably to the prohibitive 	
 	$\mathcal{O}(n^2)$  complexity of self-attention, which impedes its applicability to high-resolution 
 	images.
+	
+	\subsubsection{The Generator and Discriminator Networks}
+	We use the celebrated StyleGAN model as a starting point for our GAN design. Commonly, a 
+	generator network consists of a multi-layer CNN that receives a randomly sampled vector z and 
+	transforms it into an image. The StyleGAN approach departs from this design and, instead, 
+	introduces a feed-forward mapping network that outputs an intermediate vector w, which in turn 
+	interacts directly with each convolution through the synthesis network, globally controlling the 
+	feature maps’ statistics at every layer.
+	Effectively, this approach attains layer-wise decomposition of visual properties, allowing StyleGAN 
+	to control global aspects of the picture such as pose, lighting conditions or colour schemes, in a 
+	coherent manner over the entire image. But while StyleGAN successfully disentangles global 
+	properties, it is more limited in its ability to perform spatial decomposition, as it provides no direct 
+	means to control the style of a localized regions within the generated image.
+	Luckily, the bipartite transformer offers a solution to meet this goal. Instead of controlling the style 
+	of all features globally, we use instead our new attention layer to perform adaptive region-wise 
+	modulation. We split the latent vector $z$ into $k$ components, $z = [z_1 ,  
+	\dots, z_k ]$ and, as in StyleGAN, pass each of them through a shared mapping network, obtaining 
+	a corresponding set of intermediate latent variables $Y = [y_1 , ..., y_k ]$. Then, during synthesis, 
+	after each CNN layer in the generator, we let the feature map $X$ and latents $Y$ play the roles of 
+	the two element groups, mediating their interaction through our new attention layer (either simplex 
+	or duplex). This setting thus allows for a flexible and dynamic style modulation at the region level. 
+	Since soft attention tends to group elements based on their proximity and content similarity, we see 
+	how the transformer architecture naturally fits into the generative task and proves useful in the 
+	visual domain, allowing the model to exercise finer control in modulating local semantic regions. This 
+	capability turns to be especially useful in modelling highly-structured scenes.
+	For the discriminator, we similarly apply attention after every convolution, in this case using trained 
+	embeddings to initialize the aggregator variables $Y$ , which may intuitively represent background 
+	knowledge the model learns about the task. At the last layer, we concatenate these variables $Y$ to 
+	the final feature map $X$ to make a prediction about the identity of the image source. We note that 
+	this construction holds some resemblance to the PatchGAN discriminator, but 
+	whereas PatchGAN pools features according to a fixed predetermined scheme, the GANformer can 
+	gather the information in a more adaptive and selective manner. Overall, using this structure endows 
+	the discriminator with the capacity to likewise model long-range dependencies, which can aid the 
+	discriminator in its assessment of the image fidelity, allowing it to acquire a more holistic 
+	understanding of the visual modality.
+	As to the loss function, optimization and training configurations, we adopt the settings and 
+	techniques used in Style-GAN2 \cite{karras2020analyzing}, including in particular style mixing, 
+	stochastic variation, exponential moving average for weights, and a non-saturating logistic loss with 
+	a lazy R1 regularization.
 	
 	To recapitulate the discussion above, the GANformer successfully unifies the GAN and Transformer 
 	architectures for the task of scene generation. Compared to traditional GANs and transformers, it 
@@ -479,12 +520,14 @@
 	\end{table}
 	
 
-	\subsection{Hyper-parameters}
+	\subsection{Hyper-parameters}%TODO fixme
 	%	Describe how you set the hyperparameters and what was the source for their value (e.g. paper, 
 	%	code or your guess). 
 	
 	Note that in the code provided by the author \cite{hudson2021generative}, the hyper-parameters are 
 	not the same mentioned in the article. 
+	
+	
 	
 	\subsection{Experimental setup}	
 	The source code of our work is available at the following GitHub repository: 
@@ -499,7 +542,7 @@
 	 All the models have been trained on a Tesla P100-PCIE-16GB (GPU) provided by Google 
 	 Colab Pro.
 	
-	\subsection{Computational requirements}
+	\subsection{Computational requirements}%TODO fixme
 	%	Provide information on computational requirements for each of your experiments. For example, 
 	%   the  number of CPU/GPU hours and memory requirements. You'll need to think about this ahead 
 	%	of time, and write your code in a way that captures this information so you can later add it to 
@@ -540,7 +583,7 @@
 	(in the paper they reach better results with the GANformer with 3-times less training steps than the 
 	StyleGAN2, but they don't specify the time required for this training steps...)
 
-	\section{Results}
+	\section{Results}%TODO fixme
 	%	In this section you should report the results of your work (e.g., the outcome of an empirical 
 	%	analysis). You should be objective and support your statements with empirical evidence.
 	%	
@@ -563,17 +606,16 @@
 	These results show how the GANformer, especially when using duplex attention, manages to learn a 
 	lot faster than competing approaches, generating impressive images early in the training
 	
-	\section{Discussion and conclusion}
+	\section{Discussion and conclusion}%TODO
 	%	Here you can express your judgments and draw your conclusions based on the  evidences 
 	%	produced on the previous sections.
 	%	
 	%	Try to summarize the achievements of your project and its limits, suggesting (when appropriate) 
 	%	possible extensions and future works.
 	
+	%TODO where should we put the author contributions?
 	
-	
-	%%%%
-	\nocite{*} %TODO remove
+	%%%web
 	\bibliography{bibliography}
 	\bibliographystyle{unsrtnat}
 	\clearpage
