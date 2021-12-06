@@ -221,21 +221,21 @@ def norm(x, norm_type, parametric = True):
 # Non-linear layer with a resnet connection. Accept features 'x' of dimension 'dim',
 # and use nonlinearty 'act'. Optionally perform attention from x to y
 # (meaning information flows y -> x).
-def nnlayer(x, dim, act, lrmul = 1, y = None, ff = True, pool = False, name = "", **kwargs):
+def nnlayer(x, fmaps, act, lrmul = 1, y = None, ff = True, pool = False, name = "", **kwargs):
     shape = get_shape(x)
     _x = x
 
     if y is not None:
-        x = transformer_layer(from_tensor = x, to_tensor = y, fmaps = dim, name = name, **kwargs)[0]
+        x = transformer_layer(from_tensor = x, to_tensor = y, fmaps = fmaps, name = name, **kwargs)[0]
 
     if ff:
         if pool:
             x = to_2d(x, "last")
 
         with tf.variable_scope("Dense%s_0" % name):
-            x = apply_bias_act(dense_layer(x, dim, lrmul = lrmul), act = act, lrmul = lrmul)
+            x = apply_bias_act(dense_layer(x, fmaps, lrmul = lrmul), act = act, lrmul = lrmul)
         with tf.variable_scope("Dense%s_1" % name):
-            x = apply_bias_act(dense_layer(x, dim, lrmul = lrmul), lrmul = lrmul)
+            x = apply_bias_act(dense_layer(x, fmaps, lrmul = lrmul), lrmul = lrmul)
 
         if pool:
             x = tf.reshape(x, shape)
@@ -249,35 +249,25 @@ def nnlayer(x, dim, act, lrmul = 1, y = None, ff = True, pool = False, name = ""
 # - mean: mean pooling
 # - cnct: concatenate all spatial features together to one vector and compress them to dimension 'dim'
 # - 2d: turn a tensor [..., dim] into [-1, dim] so to create one large batch with all the elements from the last axis.
-def mlp(x, resnet, layers_num, dim, act, lrmul, pooling = "mean", transformer = False, norm_type = None, **kwargs):
+def mlp(x, layers_num, dim, act, lrmul, norm_type = None, **kwargs):
     shape = get_shape(x)
-
-    if len(get_shape(x)) > 2:
-        if pooling == "cnct":
+    if len(shape) > 2:
+        if norm_type == "cnct":
             with tf.variable_scope("Dense_pool"):
                 x = apply_bias_act(dense_layer(x, dim), act = act)
-        elif pooling == "batch":
+        elif norm_type == "batch":
             x = to_2d(x, "last")
         else:
             pool_shape = (get_shape(x)[-2], get_shape(x)[-1])
             x = tf.nn.avg_pool(x, pool_shape, pool_shape, padding = "SAME", data_format = "NCHW")
             x = to_2d(x, "first")
 
-    if resnet:
-        half_layers_num = int(layers_num / 2)
-        for layer_idx in range(half_layers_num):
-            y = x if transformer else None
-            x = nnlayer(x, dim, act, lrmul, y = y, name = layer_idx, **kwargs)
-            x = norm(x, norm_type)
-
-        with tf.variable_scope("Dense%d" % layer_idx):
-            x = apply_bias_act(dense_layer(x, dim, lrmul = lrmul), act = act, lrmul = lrmul)
-
-    else:
-        for layer_idx in range(layers_num):
-            with tf.variable_scope("Dense%d" % layer_idx):
-                x = apply_bias_act(dense_layer(x, dim, lrmul = lrmul), act = act, lrmul = lrmul)
-                x = norm(x, norm_type)
+    half_layers_num = int(layers_num / 2)
+    for layer_idx in range(half_layers_num):
+        x = nnlayer(x, dim, act, lrmul, y = x, name = layer_idx, **kwargs)
+        x = norm(x, norm_type)
+    with tf.variable_scope("Dense%d" % layer_idx):
+        x = apply_bias_act(dense_layer(x, dim, lrmul = lrmul), act = act, lrmul = lrmul)
 
     x = tf.reshape(x, [-1] + shape[1:-1] + [dim])
     return x
@@ -474,7 +464,6 @@ def get_sinusoidal_embeddings(size, dim):
 # init: uniform or normal distribution for trainable embeddings initialization
 def get_positional_embeddings(max_res, dim, init = "uniform", shared = False):
     embs = []
-    initializer = tf.random_uniform_initializer() if init == "uniform" else tf.initializers.random_normal()
     for res in range(max_res + 1):
         with tf.variable_scope("pos_emb%d" % res):
             size = 2 ** res
@@ -609,50 +598,7 @@ def transformer_layer(
 
     return from_tensor, att_probs, {"centroid_assignments": to_from}
 
-# (Not used be default)
-# Merge multiple images together through a weighted sum to create one image (Used by k-GAN only)
-# Also merge their the latent vectors that have used to create the images respectively
-# Arguments:
-# - x: the image features, [batch_size * k, C, H, W]
-# - k: the number of images to merge together
-# - type: the type of the merge (sum, softmax, max, leaves)
-# - same: whether to merge all images equally along all WH positions
-# Returns the merged images [batch_size, C, H, W] and latents [batch_size, k, layers_num, dim]
-def merge_images(x, dlatents, k, type, same = False):
-    # Reshape function to have the k copies to be merged 
-    def k_reshape(t): return tf.reshape(t, [-1, k] + get_shape(t)[1:])
 
-    # Compute scores w to be used in a following weighted sum of the images x
-    scores = k_reshape(conv2d_layer(x, dim = 1, kernel = 1)) # [B, k, 1, H, W]
-    if same:
-        scores = tf.reduce_sum(scores, axis = [-2, -1], keepdims = True) # [B, k, 1, 1, 1]
-
-    # Compute soft probabilities for weighted sum
-    if type == "softmax":
-        scores = tf.nn.softmax(scores, axis = 1) # [B, k, 1, H, W]
-    # Take only image of highest score
-    elif type == "max":
-        scores = tf.one_hot(tf.math.argmax(scores, axis = 1), k, axis = 1) # [B, k, 1, H, W]
-    # Merge the images recursively using a falling-leaves scheme (see k-GAN paper for details)
-    elif type == "leaves":
-        score_list = tf.split(scores, k, axis = 1) # [[B, 1, H, W],...]
-        alphas = tf.ones_like(score_list[0]) # [B, 1, H, W]
-        for d, weight in enumerate(score_list[1:]): # Process the k images iteratively
-            max_weight = tf.math.reduce_max(scores[:,:d + 1], ) # Compute image currently most "in-front"
-            new_alphas = tf.sigmoid(weight - max_weight) # Compute alpha values based on "distance" to the new image
-            alphas = tf.concat([alphas * (1 - new_alphas), new_alphas], axis = 1) # Compute recursive alpha values
-        scores = alphas
-    else: # sum
-        scores = tf.ones_like(scores) # [B, k, 1, H, W]
-
-    # Compute a weighted sum of the images
-    x = tf.reduce_sum(k_reshape(x) * scores, axis = 1) # [B, C, H, W]
-
-    if dlatents is not None:
-        scores = tf.reduce_mean(tf.reduce_mean(scores, axis = 2), axis = [-2, -1], keepdims = True) # [B, k, 1, 1]
-        dlatents = tf.tile(tf.reduce_sum(dlatents * scores, axis = 1, keepdims = True), [1, k, 1, 1]) # [B, k, L, D]
-
-    return x, dlatents
 #----------------------------------------------------------------------------
 # Generator GANFormer
 def G_GANformer(
@@ -704,9 +650,9 @@ def G_GANformer(
         style_mixing = None
     if not is_training or (component_mixing is not None and not tflib.is_tf_expression(component_mixing) and component_mixing <= 0):
         component_mixing = None
-    # Turn off dropout when not training
-    if not is_training:
-        kwargs["attention_dropout"] = 0.0
+    # # Turn off dropout when not training
+    # if not is_training:
+    #     kwargs["attention_dropout"] = 0.0
 
     # Useful variables
     k = 16
@@ -838,7 +784,6 @@ def G_mapping(
     mapping_lrmul           = 0.01,         # Learning rate multiplier for the mapping layers
     mapping_nonlinearity    = "lrelu",      # Activation function: relu, lrelu, etc.
     mapping_ltnt2ltnt       = True,        # Add self-attention over latents in the mapping network
-    mapping_resnet          = True,        # Use resnet connections in mapping network
     mapping_shared_dim      = 0,            # Perform a shared mapping with that dimension to all latents concatenated together
     # Attention options
     num_heads               = 1,            # Number of attention heads
@@ -856,7 +801,6 @@ def G_mapping(
     layersnum = mapping_layersnum
     lrmul = mapping_lrmul
     ltnt2ltnt = mapping_ltnt2ltnt
-    resnet = mapping_resnet
     shared_dim = mapping_shared_dim
 
     # Inputs
@@ -897,15 +841,10 @@ def G_mapping(
     mlp_kwargs = {}
     if ltnt2ltnt:
         mlp_kwargs.update({        
-        "transformer": ltnt2ltnt,
-        "num_heads": num_heads, 
-        "att_dp": attention_dropout,
-        "from_gate": ltnt_gate, 
-        "to_gate": ltnt_gate,
-        "from_pos": latent_pos, 
-        "to_pos": latent_pos,
-        "from_len": k,          
-        "to_len": k
+           "num_heads": num_heads, "att_dp": attention_dropout,
+           "from_gate": ltnt_gate, "to_gate": ltnt_gate,
+           "from_pos": latent_pos, "to_pos": latent_pos,
+           "from_len": k,          "to_len": k,
         })
     # Mapping layers
     if k == 0:
@@ -916,17 +855,17 @@ def G_mapping(
             # Concatenate all latents together (taken care by dense_layer function)
             x = apply_bias_act(dense_layer(x, shared_dim, name = "inmap"), name = "inmap")
             # Map the latents to the w space
-            x = mlp(x, resnet, layersnum, shared_dim, act, lrmul, **mlp_kwargs)
+            x = mlp(x, layersnum, shared_dim, act, lrmul, **mlp_kwargs)
             # Split the latents back to the k components
             x = tf.reshape(apply_bias_act(dense_layer(x, k * net_dim, name = "outmap"), name = "outmap"),
                 [batch_size, k, net_dim])
         else:
-            x = mlp(x, resnet, layersnum, net_dim, act, lrmul, pooling = "batch",
+            x = mlp(x, layersnum, net_dim, act, lrmul, norm_type = "batch",
                 att_mask = component_mask, **mlp_kwargs)
 
     with tf.variable_scope("global"):
         # Map global latent to the w space
-        g = mlp(g, resnet, layersnum, net_dim, act, lrmul)
+        g = mlp(g, layersnum, net_dim, act, lrmul)
     # Concatenate back region-based and global latents
     x = tf.concat([x, tf.expand_dims(g, axis = 1)], axis = 1)
 
@@ -1336,7 +1275,6 @@ def D_GANformer(
             # Reshape image features back to standard [NCHW]
             x = tf.reshape(tf.transpose(x, [0, 2, 1]), shape)
 
-      
         ksize = 3 # 3x3 convolution
         ############################# Convolution layers (standard) ############################
         # Two convolution layers with downsmapling and a resnet connection
@@ -1409,6 +1347,129 @@ def D_GANformer(
 
         o = tf.reshape(o, shape[:-1]) # [batch_size, k]
         x = tf.concat([x, o], axis = -1) # [batch_size, nf(0) + k]
+
+    # Output layer with label conditioning from "Which Training Methods for GANs do actually Converge?"
+    with tf.variable_scope("Output"):
+        x = apply_bias_act(dense_layer(x, fmaps = max(labels_in.shape[1], 1)))
+        if labels_in.shape[1] > 0:
+            x = tf.reduce_sum(x * labels_in, axis = 1, keepdims = True) # [batch_size, 1]
+
+    # Output
+    scores_out = tf.identity(x, name = "scores_out")
+    return scores_out # [batch_size, 1]
+
+
+#----------------------------------------------------------------------------
+
+
+# Discriminator network, with convolution and downsampling, NO TRANSFORMER
+def D_Stylegan(
+    images_in,                          # First input: Images [batch_size, channel, height, width]
+    labels_in,                          # Second input: Labels [batch_size, label_size]
+    # Dimensions and resolution
+    latent_size         = 512,          # Aggregator variables dimension (only for using transformer in discriminator)
+    label_size          = 0,            # Dimensionality of the labels, 0 if no labels
+    pos_dim             = None,         # Positional embeddings dimension
+    num_channels        = 3,            # Number of input color channels
+    resolution          = 1024,         # Input resolution
+    fmap_base           = 16 << 10,     # Overall multiplier for the network dimension
+    fmap_decay          = 1.0,          # log2 network dimension reduction when doubling the resolution
+    fmap_min            = 1,            # Minimum network dimension in any layer
+    fmap_max            = 512,          # Maximum network dimension in any layer
+    # General settings
+    architecture        = "resnet",     # Architecture: orig, skip, resnet
+    nonlinearity        = "lrelu",      # Activation function: relu, lrelu, etc
+    mbstd_group_size    = 4,            # Group size for the minibatch standard deviation layer, 0 = disable
+    mbstd_num_features  = 1,            # Number of features for the minibatch standard deviation layer
+    resample_kernel     = [1, 3, 3, 1], # Low-pass filter to apply when resampling activations, None = no filtering
+    **_kwargs):                         # Ignore unrecognized keyword args
+
+    # Set variables
+    act = nonlinearity
+    resolution_log2 = int(np.log2(resolution))
+    if pos_dim is None:
+        pos_dim = latent_size
+
+    assert architecture in ["orig", "skip", "resnet"]
+    assert resolution == 2**resolution_log2 and resolution >= 4
+
+    # Network dimension, is set to fmap_base and then reduces with increasing stage
+    # according to fmap_decay, in the range of [fmap_min, fmap_max] (see StyleGAN)
+    def nf(stage): return np.clip(int(fmap_base / (2.0 ** (stage * fmap_decay))), fmap_min, fmap_max)
+
+    # Inputs
+    images_in.set_shape([None, num_channels, resolution, resolution])
+    labels_in.set_shape([None, label_size])
+
+    images_in = tf.cast(images_in, tf.float32)
+    labels_in = tf.cast(labels_in, tf.float32)
+
+    # Convert input image (e.g. RGB) to image features
+    def fromrgb(x, y, res): # res = 2..resolution_log2
+        with tf.variable_scope("FromRGB"):
+            t = apply_bias_act(conv2d_layer(y, fmaps = nf(res-1), kernel = 1), act = act)
+            # Optional skip connections (see StyleGAN)
+            if x is not None:
+                t += x
+            return t
+
+    # The building block for the discriminator
+    def block(x, res): # res = 2..resolution_log2
+        shape = get_shape(x)
+        t = x
+
+
+        ksize = 3 # 3x3 convolution
+        ############################# Convolution layers (standard) ############################
+        # Two convolution layers with downsmapling and a resnet connection
+        with tf.variable_scope("Conv0"):
+            x = apply_bias_act(conv2d_layer(x, fmaps = nf(res-1), kernel = ksize), act = act)
+
+        with tf.variable_scope("Conv1_down"):
+            x = apply_bias_act(conv2d_layer(x, fmaps = nf(res-2), kernel = ksize, down = True,
+                resample_kernel = resample_kernel), act = act)
+
+        if architecture == "resnet":
+            with tf.variable_scope("Skip"):
+                t = conv2d_layer(t, fmaps = nf(res-2), kernel = 1, down = True, resample_kernel = resample_kernel)
+                x = (x + t) * (1 / np.sqrt(2))
+
+        return x
+
+    def downsample(y):
+        with tf.variable_scope("Downsample"):
+            return downsample_2d(y, k = resample_kernel)
+
+    # x is img_feats: the evolving image features grid, starting from the input resolution, and iteratively
+    # processed and downsampled until making final binary prediction about the image source (real / fake).
+    x = None
+
+    # Main layers
+    for res in range(resolution_log2, 2, -1):
+        with tf.variable_scope("%dx%d" % (2**res, 2**res)):
+            # Optional skip/resnet connections (see StyleGAN)
+            if architecture == "skip" or res == resolution_log2:
+                x = fromrgb(x, images_in, res)
+            # Process features through the discriminator block
+            x = block(x, res)
+            # Downsampling for skip connection
+            if architecture == "skip":
+                images_in = downsample(images_in)
+
+    # Final layers
+    with tf.variable_scope("4x4"):
+        if architecture == "skip":
+            x = fromrgb(x, images_in, 2)
+        # Minibatch standard deviation layer (see StyleGAN)
+        if mbstd_group_size > 1:
+            with tf.variable_scope("MinibatchStddev"):
+                x = minibatch_stddev_layer(x, mbstd_group_size, mbstd_num_features)
+        with tf.variable_scope("Conv"):
+            x = apply_bias_act(conv2d_layer(x, fmaps = nf(1), kernel = 3), act = act)
+        # Turn final 4x4 image grid to a vector
+        with tf.variable_scope("Dense0"):
+            x = apply_bias_act(dense_layer(x, fmaps = nf(0)), act = act) # [batch_size, nf(0)]
+
 
     # Output layer with label conditioning from "Which Training Methods for GANs do actually Converge?"
     with tf.variable_scope("Output"):
