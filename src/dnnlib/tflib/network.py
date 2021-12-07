@@ -327,7 +327,7 @@ class Network:
         names = [name for name in self.vars.keys() if name in src_net.vars]
         # names = [name if self.vars[name].shape == src_net.vars[name].shape else print(f"{name}: {self.vars[name].shape}, {src_net.vars[name].shape}") for name in names]
          
-         names_new = []
+        names_new = []
         for name in names:
             if self.vars[name].shape == src_net.vars[name].shape:
                 names_new.append(name)
