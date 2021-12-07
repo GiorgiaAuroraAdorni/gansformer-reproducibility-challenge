@@ -325,7 +325,18 @@ class Network:
     def copy_vars_from(self, src_net: "Network") -> None:
         """Copy the values of all variables from the given network, including sub-networks."""
         names = [name for name in self.vars.keys() if name in src_net.vars]
-        names = [name if self.vars[name].shape == src_net.vars[name].shape else print(f"{name}: {self.vars[name].shape}, {src_net.vars[name].shape}") for name in names]
+        # names = [name if self.vars[name].shape == src_net.vars[name].shape else print(f"{name}: {self.vars[name].shape}, {src_net.vars[name].shape}") for name in names]
+         
+         names_new = []
+        for name in names:
+            if self.vars[name].shape == src_net.vars[name].shape:
+                names_new.append(name)
+            else:
+                if not mismatch:
+                    mismatch = True
+                    print("Variables shape mismatching:")
+                print("{}: {}, {}".format(name, self.vars[name].shape, src_net.vars[name].shape))
+        names = names_new
         tfutil.set_vars(tfutil.run({self.vars[name]: src_net.vars[name] for name in names}))
 
     def copy_trainables_from(self, src_net: "Network") -> None:
