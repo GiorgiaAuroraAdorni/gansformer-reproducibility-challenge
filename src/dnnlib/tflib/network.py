@@ -408,7 +408,7 @@ class Network:
         if key not in self._run_cache:
             with tfutil.absolute_name_scope(self.scope + "/_Run"), tf.control_dependencies(None):
                 with tf.device("/cpu:0"):
-                    in_expr = [tf.placeholder(tf.float32, name=name) for name in self.input_names]
+                    in_expr = [tf.placeholder({"uimages_in": tf.uint8}.get(name, tf.float32), name = name) for name in self.input_names]
                     in_split = list(zip(*[tf.split(x, num_gpus) for x in in_expr]))
 
                 out_split = []
@@ -430,7 +430,7 @@ class Network:
                             out_gpu = out_kwargs.pop("func")(*out_gpu, **out_kwargs)
                             out_gpu = [out_gpu] if tfutil.is_tf_expression(out_gpu) else list(out_gpu)
 
-                        assert len(out_gpu) == self.num_outputs
+                        # assert len(out_gpu) == self.num_outputs
                         out_split.append(out_gpu)
 
                 with tf.device("/cpu:0"):
