@@ -121,7 +121,7 @@ class Network:
         self._build_func_name = None  # Name of the build function.
         self._build_module_src = None  # Full source code of the module containing the build function.
         self._run_cache = dict()  # Cached graph data for Network.run().
-
+        self.translate_dict = dict()
     def _init_graph(self) -> None:
         # Collect inputs.
         self.input_names = []
@@ -316,7 +316,8 @@ class Network:
         net._init_graph()
         net.copy_vars_from(self)
         return net
-
+    def translate(self, name):
+        return self.translate_dict.get(name, name)
     def copy_own_vars_from(self, src_net: "Network") -> None:
         """Copy the values of all variables from the given network, excluding sub-networks."""
         names = [name for name in self.own_vars.keys() if name in src_net.own_vars]
@@ -324,20 +325,9 @@ class Network:
 
     def copy_vars_from(self, src_net: "Network") -> None:
         """Copy the values of all variables from the given network, including sub-networks."""
-        names = [name for name in self.vars.keys() if name in src_net.vars]
-        # names = [name if self.vars[name].shape == src_net.vars[name].shape else print(f"{name}: {self.vars[name].shape}, {src_net.vars[name].shape}") for name in names]
-         
-        names_new = []
-        for name in names:
-            if self.vars[name].shape == src_net.vars[name].shape:
-                names_new.append(name)
-            else:
-                if not mismatch:
-                    mismatch = True
-                    print("Variables shape mismatching:")
-                print("{}: {}, {}".format(name, self.vars[name].shape, src_net.vars[name].shape))
-        names = names_new
-        tfutil.set_vars(tfutil.run({self.vars[name]: src_net.vars[name] for name in names}))
+        names = [name for name in self.vars.keys() if self.translate(name) in src_net.vars]
+        names = [name if self.vars[name].shape == src_net.vars[self.translate(name)].shape else print(f"{name}: {self.vars[name].shape}, {src_net.vars[self.translate(name)].shape}") for name in names]
+        tfutil.set_vars(tfutil.run({self.vars[name]: src_net.vars[self.translate(name)] for name in names}))
 
     def copy_trainables_from(self, src_net: "Network") -> None:
         """Copy the values of all trainable variables from the given network, including sub-networks."""
