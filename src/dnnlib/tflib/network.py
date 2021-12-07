@@ -150,7 +150,7 @@ class Network:
             assert tf.get_variable_scope().name == self.scope
             assert tf.get_default_graph().get_name_scope() == self.scope
             with tf.control_dependencies(None):  # ignore surrounding control dependencies
-                self.input_templates = [tf.placeholder(tf.float32, name=name) for name in self.input_names]
+                self.input_templates = [tf.placeholder({"uimages_in": tf.uint8}.get(name, tf.float32), name=name) for name in self.input_names]
                 out_expr = self._build_func(*self.input_templates, **build_kwargs)
 
         # Collect outputs.
@@ -198,6 +198,10 @@ class Network:
 
     def get_output_for(self, *in_expr: TfExpression, return_as_list: bool = False, **dynamic_kwargs) -> Union[TfExpression, List[TfExpression]]:
         """Construct TensorFlow expression(s) for the output(s) of this network, given the input expression(s)."""
+        if len(in_expr) > self.num_inputs:
+            in_expr = in_expr[:self.num_inputs]
+        if len(in_expr) < self.num_inputs:
+            in_expr = in_expr + (None,) * (self.num_inputs - len(in_expr))
         assert len(in_expr) == self.num_inputs
         assert not all(expr is None for expr in in_expr)
 
@@ -377,6 +381,10 @@ class Network:
             assume_frozen:      Improve multi-GPU performance by assuming that the trainable parameters will remain changed between calls.
             dynamic_kwargs:     Additional keyword arguments to be passed into the network build function.
         """
+        if len(in_arrays) > self.num_inputs:
+            in_arrays = in_arrays[:self.num_inputs]
+        if len(in_arrays) < self.num_inputs:
+            in_arrays = in_arrays + (None, ) * (self.num_inputs - len(in_arrays))
         assert len(in_arrays) == self.num_inputs
         assert not all(arr is None for arr in in_arrays)
         assert input_transform is None or util.is_top_level_function(input_transform["func"])
