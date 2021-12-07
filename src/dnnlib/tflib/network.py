@@ -121,7 +121,6 @@ class Network:
         self._build_func_name = None  # Name of the build function.
         self._build_module_src = None  # Full source code of the module containing the build function.
         self._run_cache = dict()  # Cached graph data for Network.run().
-        self.translate_dict = dict()
     def _init_graph(self) -> None:
         # Collect inputs.
         self.input_names = []
@@ -150,7 +149,7 @@ class Network:
             assert tf.get_variable_scope().name == self.scope
             assert tf.get_default_graph().get_name_scope() == self.scope
             with tf.control_dependencies(None):  # ignore surrounding control dependencies
-                self.input_templates = [tf.placeholder({"uimages_in": tf.uint8}.get(name, tf.float32), name=name) for name in self.input_names]
+                self.input_templates = [tf.placeholder(tf.float32, name=name) for name in self.input_names]
                 out_expr = self._build_func(*self.input_templates, **build_kwargs)
 
         # Collect outputs.
@@ -316,8 +315,6 @@ class Network:
         net._init_graph()
         net.copy_vars_from(self)
         return net
-    def translate(self, name):
-        return self.translate_dict.get(name, name)
     def copy_own_vars_from(self, src_net: "Network") -> None:
         """Copy the values of all variables from the given network, excluding sub-networks."""
         names = [name for name in self.own_vars.keys() if name in src_net.own_vars]
@@ -325,9 +322,8 @@ class Network:
 
     def copy_vars_from(self, src_net: "Network") -> None:
         """Copy the values of all variables from the given network, including sub-networks."""
-        names = [name for name in self.vars.keys() if self.translate(name) in src_net.vars]
-        names = [name if self.vars[name].shape == src_net.vars[self.translate(name)].shape else print(f"{name}: {self.vars[name].shape}, {src_net.vars[self.translate(name)].shape}") for name in names]
-        tfutil.set_vars(tfutil.run({self.vars[name]: src_net.vars[self.translate(name)] for name in names}))
+        names = [name for name in self.vars.keys() if name in src_net.vars]
+        tfutil.set_vars(tfutil.run({self.vars[name]: src_net.vars[name] for name in names}))
 
     def copy_trainables_from(self, src_net: "Network") -> None:
         """Copy the values of all trainable variables from the given network, including sub-networks."""
@@ -409,7 +405,7 @@ class Network:
         if key not in self._run_cache:
             with tfutil.absolute_name_scope(self.scope + "/_Run"), tf.control_dependencies(None):
                 with tf.device("/cpu:0"):
-                    in_expr = [tf.placeholder({"uimages_in": tf.uint8}.get(name, tf.float32), name = name) for name in self.input_names]
+                    in_expr = [tf.placeholder(tf.float32, name=name) for name in self.input_names]
                     in_split = list(zip(*[tf.split(x, num_gpus) for x in in_expr]))
 
                 out_split = []
@@ -495,10 +491,8 @@ class Network:
 
             # Scope does not contain ops as immediate children => recurse deeper.
             contains_direct_ops = any("/" not in op.name[len(global_prefix):] and op.type not in ["Identity", "Cast", "Transpose"] for op in cur_ops)
-            scope_name = scope[len(self.scope) + 1:]
-            rec_scope = scope_name in ["G_mapping", "G_synthesis"] or any((op.name[len(global_prefix):].startswith("AttLayer")) for op in cur_ops)
             
-            if (level <= 1 or not contains_direct_ops or rec_scope) and (len(cur_ops) + len(cur_vars)) > 1:
+            if (level == 0 or not contains_direct_ops) and (len(cur_ops) + len(cur_vars)) > 1:
                 visited = set()
                 for rel_name in [op.name[len(global_prefix):] for op in cur_ops] + [name[len(local_prefix):] for name, _var in cur_vars]:
                     token = rel_name.split("/")[0]
@@ -516,7 +510,7 @@ class Network:
         recurse(self.scope, self.list_ops(), list(self.vars.items()), 0)
         return layers
 
-    def print_layers(self, title: str = None, hide_layers_with_no_params: bool = False) -> None:
+    def print_layers(self, title: str = None, hide_layers_with_no_params: bool = True) -> None:
         """Print a summary table of the network structure."""
         rows = [[title if title is not None else self.name, "Params", "OutputShape", "WeightShape"]]
         rows += [["---"] * 4]
@@ -534,7 +528,7 @@ class Network:
                 num_params_str = str(num_params) if num_params > 0 else "-"
                 output_shape_str = str(layer_output.shape)
                 weight_shape_str = str(weights[0].shape) if len(weights) >= 1 else "-"
-                rows += [[str(layer_name), num_params_str, output_shape_str, weight_shape_str]]
+                rows += [[layer_name, num_params_str, output_shape_str, weight_shape_str]]
 
         rows += [["---"] * 4]
         rows += [["Total", str(total_params), "", ""]]
