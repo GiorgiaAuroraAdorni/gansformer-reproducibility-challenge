@@ -121,7 +121,6 @@ class Network:
         self._build_func_name = None  # Name of the build function.
         self._build_module_src = None  # Full source code of the module containing the build function.
         self._run_cache = dict()  # Cached graph data for Network.run().
-
     def _init_graph(self) -> None:
         # Collect inputs.
         self.input_names = []
@@ -312,7 +311,6 @@ class Network:
         net._init_graph()
         net.copy_vars_from(self)
         return net
-
     def copy_own_vars_from(self, src_net: "Network") -> None:
         """Copy the values of all variables from the given network, excluding sub-networks."""
         names = [name for name in self.own_vars.keys() if name in src_net.own_vars]
@@ -321,6 +319,7 @@ class Network:
     def copy_vars_from(self, src_net: "Network") -> None:
         """Copy the values of all variables from the given network, including sub-networks."""
         names = [name for name in self.vars.keys() if name in src_net.vars]
+        names = [name if self.vars[name].shape == src_net.vars[name].shape else print(f"{name}: {self.vars[name].shape}, {src_net.vars[name].shape}") for name in names]
         tfutil.set_vars(tfutil.run({self.vars[name]: src_net.vars[name] for name in names}))
 
     def copy_trainables_from(self, src_net: "Network") -> None:
@@ -376,6 +375,7 @@ class Network:
             assume_frozen:      Improve multi-GPU performance by assuming that the trainable parameters will remain changed between calls.
             dynamic_kwargs:     Additional keyword arguments to be passed into the network build function.
         """
+        
         assert len(in_arrays) == self.num_inputs
         assert not all(arr is None for arr in in_arrays)
         assert input_transform is None or util.is_top_level_function(input_transform["func"])
@@ -421,7 +421,7 @@ class Network:
                             out_gpu = out_kwargs.pop("func")(*out_gpu, **out_kwargs)
                             out_gpu = [out_gpu] if tfutil.is_tf_expression(out_gpu) else list(out_gpu)
 
-                        assert len(out_gpu) == self.num_outputs
+                        # assert len(out_gpu) == self.num_outputs
                         out_split.append(out_gpu)
 
                 with tf.device("/cpu:0"):
@@ -485,7 +485,9 @@ class Network:
 
             # Scope does not contain ops as immediate children => recurse deeper.
             contains_direct_ops = any("/" not in op.name[len(global_prefix):] and op.type not in ["Identity", "Cast", "Transpose"] for op in cur_ops)
-            if (level == 0 or not contains_direct_ops) and (len(cur_ops) + len(cur_vars)) > 1:
+            rec_scope = scope[len(self.scope) + 1:] in ["G_mapping", "G_synthesis"] or any((op.name[len(global_prefix):].startswith("AttLayer")) for op in cur_ops)
+            
+            if (level <= 1 or not contains_direct_ops or rec_scope) and (len(cur_ops) + len(cur_vars)) > 1:
                 visited = set()
                 for rel_name in [op.name[len(global_prefix):] for op in cur_ops] + [name[len(local_prefix):] for name, _var in cur_vars]:
                     token = rel_name.split("/")[0]
@@ -503,7 +505,7 @@ class Network:
         recurse(self.scope, self.list_ops(), list(self.vars.items()), 0)
         return layers
 
-    def print_layers(self, title: str = None, hide_layers_with_no_params: bool = False) -> None:
+    def print_layers(self, title: str = None, hide_layers_with_no_params: bool = True) -> None:
         """Print a summary table of the network structure."""
         rows = [[title if title is not None else self.name, "Params", "OutputShape", "WeightShape"]]
         rows += [["---"] * 4]
@@ -528,8 +530,11 @@ class Network:
 
         widths = [max(len(cell) for cell in column) for column in zip(*rows)]
         print()
-        for row in rows:
-            print("  ".join(cell + " " * (width - len(cell)) for cell, width in zip(row, widths)))
+        to_fix = {0, 1, len(rows) - 2, len(rows) - 1}
+        for ri, row in enumerate(rows):
+            fix_w = lambda ri, ci, w: w - 8 if ri in to_fix and ci == 0 else w
+            s = "  ".join(cell + " " * (fix_w(ri, ci, width) - len(cell)) for ci, (cell, width) in enumerate(zip(row, widths)))
+            print(s)        
         print()
 
     def setup_weight_histograms(self, title: str = None) -> None:
