@@ -492,8 +492,9 @@ class Network:
 
             # Scope does not contain ops as immediate children => recurse deeper.
             contains_direct_ops = any("/" not in op.name[len(global_prefix):] and op.type not in ["Identity", "Cast", "Transpose"] for op in cur_ops)
+            rec_scope = scope[len(self.scope) + 1:] in ["G_mapping", "G_synthesis"] or any((op.name[len(global_prefix):].startswith("AttLayer")) for op in cur_ops)
             
-            if (level == 0 or not contains_direct_ops) and (len(cur_ops) + len(cur_vars)) > 1:
+            if (level <= 1 or not contains_direct_ops or rec_scope) and (len(cur_ops) + len(cur_vars)) > 1:
                 visited = set()
                 for rel_name in [op.name[len(global_prefix):] for op in cur_ops] + [name[len(local_prefix):] for name, _var in cur_vars]:
                     token = rel_name.split("/")[0]
