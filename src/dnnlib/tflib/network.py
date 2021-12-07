@@ -321,6 +321,7 @@ class Network:
     def copy_vars_from(self, src_net: "Network") -> None:
         """Copy the values of all variables from the given network, including sub-networks."""
         names = [name for name in self.vars.keys() if name in src_net.vars]
+        names = [name if self.vars[name].shape == src_net.vars[name].shape else print(f"{name}: {self.vars[name].shape}, {src_net.vars[name].shape}") for name in names]
         tfutil.set_vars(tfutil.run({self.vars[name]: src_net.vars[name] for name in names}))
 
     def copy_trainables_from(self, src_net: "Network") -> None:
@@ -485,7 +486,9 @@ class Network:
 
             # Scope does not contain ops as immediate children => recurse deeper.
             contains_direct_ops = any("/" not in op.name[len(global_prefix):] and op.type not in ["Identity", "Cast", "Transpose"] for op in cur_ops)
-            if (level == 0 or not contains_direct_ops) and (len(cur_ops) + len(cur_vars)) > 1:
+            rec_scope = scope[len(self.scope) + 1:] in ["G_mapping", "G_synthesis"] or any((op.name[len(global_prefix):].startswith("AttLayer")) for op in cur_ops)
+            
+            if (level <= 1 or not contains_direct_ops or rec_scope) and (len(cur_ops) + len(cur_vars)) > 1:
                 visited = set()
                 for rel_name in [op.name[len(global_prefix):] for op in cur_ops] + [name[len(local_prefix):] for name, _var in cur_vars]:
                     token = rel_name.split("/")[0]
@@ -528,8 +531,11 @@ class Network:
 
         widths = [max(len(cell) for cell in column) for column in zip(*rows)]
         print()
-        for row in rows:
-            print("  ".join(cell + " " * (width - len(cell)) for cell, width in zip(row, widths)))
+        to_fix = {0, 1, len(rows) - 2, len(rows) - 1}
+        for ri, row in enumerate(rows):
+            fix_w = lambda ri, ci, w: w - 8 if ri in to_fix and ci == 0 else w
+            s = "  ".join(cell + " " * (fix_w(ri, ci, width) - len(cell)) for ci, (cell, width) in enumerate(zip(row, widths)))
+            print(s)        
         print()
 
     def setup_weight_histograms(self, title: str = None) -> None:
