@@ -264,11 +264,62 @@
 	
 	\subsection{Generative Adversarial Transformers}%TODO fixme	
 	The Generative Adversarial Transformer (GANformer), as presented in \cite{hudson2021generative}, 
-	is a type of GAN, which involves a \textit{generator network} (${G}$), that maps a sample from 
-	the latent space to the output space (e.g. an image), and a \textit{discriminator network}
-	(${D}$) which seeks to discern between real and fake samples. As shown in Section 
-	\ref{sec:gan}, the two networks compete with each other through a minimax game until reaching an 
-	equilibrium. 
+	is a type of GAN, which involves two networks: the \textit{generator} (${G}$), which maps a sample 
+	$z$ from the latent space to the output space (e.g., producing an image $x$), and the 
+	\textit{discriminator}(${D}$) which receives images originated from the dataset or the generator and 
+	seeks to discern between real and fake samples. 
+	
+	As shown in Section \ref{sec:gan}, the two networks compete with each other through a minimax 
+	game until reaching an equilibrium. 
+	
+	%TODO this part is from the readme of te repo
+	In the generator network, the latent $z$ has a shape 
+	[\texttt{batch\_size}, \texttt{component\_num}, \texttt{latent\_dim}]. 
+	%\texttt{component\_num} is = 1 for the StyleGAN while >1 for the GANformer.
+	The latent components are defined by splitting $z$ along the second dimension to obtain $z_1, 
+	\dots, z_k$ latent components.
+	
+	The generator likewise is composed of two parts:
+	\begin{enumerate}
+		\item The \textit{mapping network}, which consists in a series of feed-forward layers, whose 
+		objective is to convert the sampled latents from a normal distribution $z$ to the intermediate 
+		space $w$. The $k$ latent components either are mapped independently or interact with each 
+		other through self-attention.
+		\item The \textit{synthesis network} is composed by multiple layers of convolution where the 
+		images features begin from a small constant/sampled grid and up-sampling until reaching the 
+		desirable resolution.
+		After each convolution, the image features are modulated by the intermediate latent vectors $w$, 
+		meaning that their variance and bias are controlled. 
+		While in StyleGAN2 a single global $w$ vector controls all the features equally, the GANformer 
+		uses attention so that the $k$ latent components specialise to control different regions in the 
+		image to create it cooperatively, and therefore perform better especially in generating images 
+		depicting multi-object scenes, allowing also for a flexible and dynamic style modulation at the 
+		region level.
+	\end{enumerate}
+	
+	Attention can be used in several ways: 
+	\begin{enumerate}
+		\item Simplex Attention: when attention is applied in one direction only from the latents to the 
+		image features (top-down).
+		\item Duplex Attention: when attention is applied in the two directions: latents to image features 
+		(top-down) and then image features back to latents (bottom-up), so that each representation 
+		informs the other iteratively.
+		\item Self Attention between latents: can also be used so to each direct interactions between the 
+		latents.
+		\item Self Attention between image features (SAGAN model): prior approaches used attention 
+		directly 
+		between the image features, but this method does not scale well due to the quadratic number of 
+		features which becomes very high for high-resolutions.
+	\end{enumerate}
+
+	The discriminator model performs multiple layers of convolution downsampling on the image, 
+	reducing the representation's resolution gradually until making final prediction. 
+	Optionally, attention can be incorporated into the discriminator as well where it has multiple $k$ 
+	aggregator variables, that use attention to adaptively collect information from the image while being 
+	processed. We observe small improvements in model performance when attention is used in the 
+	discriminator, although note that most of the gain in using attention based on our observations 
+	arises from the generator.
+	%TODO until here
 	
 	The main difference between the GANformer and a GAN is that, instead of relying on multiple layers 
 	of convolution, a \textit{bipartite transformer} structure is used to compute \textit{soft attention}, 
@@ -432,7 +483,7 @@
 	images with 64x64 resolution, composed of 16 components that vary in 10 artwork attributes, 4 
 	colour attributes, and 4 proportion attributes (see in Table \ref{tab:dataset}). 
 
-	\begin{table}[htb]
+	\begin{table}[htb]%TODO maybe remove
 		\centering
 		\caption{Attributes of the Cartoon Set \url{https://google.github.io/cartoonset/download}.}
 		\label{tab:dataset}
@@ -549,7 +600,6 @@
 	slower than the StyleGAN2, which is instead able to produce high-quality images in approximately 
 	x-times less training steps than the GANformer.
 	
-	
 	(in the paper they reach better results with the GANformer with 3-times less training steps than the 
 	StyleGAN2, but they don't specify the time required for this training steps...)
 
@@ -567,14 +617,19 @@
 	
 	Sample images from different points in training are based on the same sampled latent vectors, 
 	thereby showing how the image evolves during the training.
-	
-	
+		
 	For CLEVR and Cityscapes, we present results after training to generate 100k, 200k, 500k, 1m, and 
 	2m samples. For the Bedroom case, we present results after 500k, 1m, 2m, 5m and 10m generated 
 	samples during training
 	
 	These results show how the GANformer, especially when using duplex attention, manages to learn a 
 	lot faster than competing approaches, generating impressive images early in the training
+	
+	%TODO
+	plot of the FID	Score over time for the five models
+	
+	visualisation of sample images produced by the five models
+	
 	
 	\section{Discussion and conclusion}%TODO
 	%	Here you can express your judgments and draw your conclusions based on the  evidences 
