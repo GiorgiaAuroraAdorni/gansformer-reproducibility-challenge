@@ -23,7 +23,7 @@ class FID(metric_base.MetricBase):
         self.num_images = num_images
         self.minibatch_per_gpu = minibatch_per_gpu
 
-    def _evaluate(self, Gs, Gs_kwargs, num_gpus):
+    def _evaluate(self, Gs, Gs_kwargs, num_gpus, ganformer):
         minibatch_size = num_gpus * self.minibatch_per_gpu
         inception = misc.load_pkl('https://nvlabs-fi-cdn.nvidia.com/stylegan/networks/metrics/inception_v3_features.pkl')
         activations = np.empty([self.num_images, inception.output_shape[1]], dtype=np.float32)
@@ -53,6 +53,7 @@ class FID(metric_base.MetricBase):
                 latents = tf.random_normal([self.minibatch_per_gpu] + Gs_clone.input_shape[1:])
                 labels = self._get_random_labels_tf(self.minibatch_per_gpu)
                 images = Gs_clone.get_output_for(latents, labels, **Gs_kwargs)
+                images = images[0] if ganformer else images
                 images = tflib.convert_images_to_uint8(images)
                 result_expr.append(inception_clone.get_output_for(images))
 
