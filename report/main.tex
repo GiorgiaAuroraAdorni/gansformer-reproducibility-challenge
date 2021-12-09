@@ -21,6 +21,9 @@
 \usepackage{mathtools} 
 \usepackage {xcolor}
 \usepackage[section]{placeins} % Prevent figures from being moved across sections
+% Reset subcaption counters at the start of figure/table float
+\usepackage{subcaption}
+
 
 \title{ATML Report}
 
@@ -642,14 +645,38 @@
 	points along the curves. 
 	For this specific application, FID is used to measures the feature distance between the real and the 
 	generated images, but it can be used for measuring the distance between two distributions as well.
-	
-	\begin{figure*}[htb]				
-	\centering
-	\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/interpolation_stylegan2.png}
-	\caption{Simple $z$ interpolation using StyleGAN2 model.}
-	\label{fig:interpolations2}
-\end{figure*}
 
+	\begin{figure}[ht]
+		\centering
+		\begin{subfigure}{\linewidth}
+			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/random_Stylegan2_300kimg.png}
+			\vspace{-7mm}
+			\caption{StyleGAN2.} 
+		\end{subfigure}
+		\begin{subfigure}{\linewidth}
+			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/random_GANFormer_Simplex_D_StyleGAN_300kimg.png}
+			\vspace{-7mm}
+			\caption{GANformer model with Simplex attention and discriminator without attention.}
+		\end{subfigure}
+		\vspace{3mm}
+		\caption{\textbf{Visualisation of 9 images generated with the various models}.}\label{fig:random}
+	\end{figure}
+
+	\begin{figure}[ht]
+		\centering
+		\begin{subfigure}{\linewidth}
+			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/interpolation_Stylegan2_300kimg.png}
+			\vspace{-7mm}
+			\caption{StyleGAN2.} 
+		\end{subfigure}
+		\begin{subfigure}{\linewidth}
+			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/interpolation_GANFormer_Simplex_D_StyleGAN_300kimg.png}
+			\vspace{-7mm}
+			\caption{GANformer model with Simplex attention and discriminator without attention.}
+		\end{subfigure}
+		\vspace{3mm}
+		\caption{\textbf{Simple $z$ interpolation using of the various models}.}\label{fig:interpolation}
+	\end{figure}
 
 
 %	We evaluate the models along commonly used metrics such as FID, IS, and Precision \& Recall 
