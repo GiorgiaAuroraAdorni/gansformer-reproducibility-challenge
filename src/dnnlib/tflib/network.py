@@ -197,6 +197,10 @@ class Network:
 
     def get_output_for(self, *in_expr: TfExpression, return_as_list: bool = False, **dynamic_kwargs) -> Union[TfExpression, List[TfExpression]]:
         """Construct TensorFlow expression(s) for the output(s) of this network, given the input expression(s)."""
+        if len(in_expr) > self.num_inputs:
+            in_expr = in_expr[:self.num_inputs]
+        if len(in_expr) < self.num_inputs:
+            in_expr = in_expr + (None,) * (self.num_inputs - len(in_expr))
         assert len(in_expr) == self.num_inputs
         assert not all(expr is None for expr in in_expr)
 
