@@ -375,7 +375,10 @@ class Network:
             assume_frozen:      Improve multi-GPU performance by assuming that the trainable parameters will remain changed between calls.
             dynamic_kwargs:     Additional keyword arguments to be passed into the network build function.
         """
-        
+        if len(in_arrays) > self.num_inputs:
+            in_arrays = in_arrays[:self.num_inputs]
+        if len(in_arrays) < self.num_inputs:
+            in_arrays = in_arrays + (None, ) * (self.num_inputs - len(in_arrays))
         assert len(in_arrays) == self.num_inputs
         assert not all(arr is None for arr in in_arrays)
         assert input_transform is None or util.is_top_level_function(input_transform["func"])
