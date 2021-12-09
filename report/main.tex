@@ -629,7 +629,7 @@
 	%TODO
 	\begin{figure*}[htb]				
 		\centering
-		\includegraphics[width=.7\linewidth]{../src/trained_network/FIDscore.pdf}
+		\includegraphics[width=.7\linewidth]{../src/trained_network/out_imgs/FIDscore.pdf}
 		\caption{\textbf{Comparison between the StyleGAN2 and the GANformer models.} We evaluate 
 		the models according to FID score along 300k image samples. The score is computed every 
 		sixteen checkpoints.}
@@ -643,7 +643,12 @@
 	For this specific application, FID is used to measures the feature distance between the real and the 
 	generated images, but it can be used for measuring the distance between two distributions as well.
 	
-
+	\begin{figure*}[htb]				
+	\centering
+	\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/interpolation_stylegan2.png}
+	\caption{Simple $z$ interpolation using StyleGAN2 model.}
+	\label{fig:interpolations2}
+\end{figure*}
 
 
 

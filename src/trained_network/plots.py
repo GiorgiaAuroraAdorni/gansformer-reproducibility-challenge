@@ -32,8 +32,8 @@ def plot_learning_curve(data, labels, title):
 
 
 # opening the CSV file
-data_style = pd.read_csv('FIDScore_Stylegan2_300kimg.csv', delimiter=" ")
-data_ganfsimpnat = pd.read_csv('FIDScore_GanformerSimplexNoAtt_300kimg.csv', delimiter=" ")
+data_style = pd.read_csv('scores/FIDScore_Stylegan2_300kimg.csv', delimiter=" ")
+data_ganfsimpnat = pd.read_csv('scores.FIDScore_GanformerSimplexNoAtt_300kimg.csv', delimiter=" ")
 
 labels = ["StyleGAN2", "GANformer with Simplex attention \n(no discriminator attention)"]
 title = "Learning Performance"
@@ -42,5 +42,5 @@ title = "Learning Performance"
 
 plot_learning_curve([data_style, data_ganfsimpnat], labels, title)
 
-plt.savefig('FIDscore.pdf', dpi=600)
+plt.savefig('out_imgs/FIDscore.pdf', dpi=600)
 plt.close()
