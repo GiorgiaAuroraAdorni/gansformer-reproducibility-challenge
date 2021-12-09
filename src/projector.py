@@ -63,7 +63,7 @@ class Projector:
         # Find dlatent stats.
         self._info('Finding W midpoint and stddev using %d samples...' % self.dlatent_avg_samples)
         latent_samples = np.random.RandomState(123).randn(self.dlatent_avg_samples, *self._Gs.input_shapes[0][1:])
-        dlatent_samples = (self._Gs.run(latent_samples, None,take_dlatents=True)[2][:, :1, :]) # [N, 1, 512]
+        dlatent_samples = (self._Gs.run(latent_samples, None, return_dlatents=True)[2][:, :1, :]) # [N, 1, 512]
         dlatent_samples = np.reshape(dlatent_samples, [-1,1,dlatent_samples.shape[-1]])
         # dlatent_samples = self._Gs.run(latent_samples, None, take_dlatents=True )[:, :1, :] # [N, 1, 512]
         print(dlatent_samples.shape)
