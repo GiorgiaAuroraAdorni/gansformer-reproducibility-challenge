@@ -1,7 +1,7 @@
 # gansformer-reproducibility-challenge
 
 > Project for Advance Topic in Machine Learning course @ USI 21/22.  
-> See https://github.com/GiorgiaAuroraAdorni/gansformer-reproducibility-challenge, https://drive.google.com/drive/folders/1sqHD-X4mLOOkoT-xJvWGdPlwxb5et0kA?usp=sharing for models and https://drive.google.com/drive/folders/1ZFfO4HVINH-aDQbgLscJxNTqGLEIOMZv?usp=sharing for datasets.
+> See https://github.com/GiorgiaAuroraAdorni/gansformer-reproducibility-challenge, https://drive.google.com/drive/folders/1sqHD-X4mLOOkoT-xJvWGdPlwxb5et0kA?usp=sharing for datasets and https://drive.google.com/drive/folders/1ZFfO4HVINH-aDQbgLscJxNTqGLEIOMZv?usp=sharing for models.
 
 ### Contributors
 
