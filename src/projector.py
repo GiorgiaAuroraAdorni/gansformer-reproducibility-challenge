@@ -106,12 +106,12 @@ class Projector:
         #     proc_images_expr = tf.reduce_mean(tf.reshape(proc_images_expr, [-1, sh[1], sh[2] // factor, factor, sh[2] // factor, factor]), axis=[3,5])
 
         # Loss graph.
-        self._info('Building loss graph...')
-        self._target_images_var = tf.Variable(tf.zeros(proc_images_expr.shape), name='target_images_var')
-        if self._lpips is None:
-            self._lpips = misc.load_pkl('https://nvlabs-fi-cdn.nvidia.com/stylegan/networks/metrics/vgg16_zhang_perceptual.pkl')
-        self._dist = self._lpips.get_output_for(proc_images_expr, self._target_images_var)
-        self._loss = tf.reduce_sum(self._dist)
+        # self._info('Building loss graph...')
+        # self._target_images_var = tf.Variable(tf.zeros(proc_images_expr.shape), name='target_images_var')
+        # if self._lpips is None:
+        #     self._lpips = misc.load_pkl('https://nvlabs-fi-cdn.nvidia.com/stylegan/networks/metrics/vgg16_zhang_perceptual.pkl')
+        # self._dist = self._lpips.get_output_for(proc_images_expr, self._target_images_var)
+        # self._loss = tf.reduce_sum(self._dist)
 
         # Noise regularization graph.
         self._info('Building noise regularization graph...')
