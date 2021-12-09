@@ -1,15 +1,32 @@
-import matplotlib.pyplot as plt
-import pandas as pd
 import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
 matplotlib.rcParams['mathtext.fontset'] = 'stix'
 matplotlib.rcParams['font.family'] = 'STIXGeneral'
 matplotlib.pyplot.title(r'ABC123 vs $\mathrm{ABC123}^{123}$')
+
+def annotate_min(y, idx, ax=None):
+    ymin = y.min()
+    text = "{:.0f}".format(ymin)
+
+    if not ax:
+        ax = plt.gca()
+
+    multip = 10 * idx
+
+    ax.annotate(text, xy=(300, ymin), xycoords='data',
+                xytext=(-30 - multip, 30 - multip), textcoords='offset points',
+                arrowprops=dict(arrowstyle="->")
+                )
 
 def plot_learning_curve(data, labels, title):
     """
     Generate a simple plot of the learning performance.
 
     @param data:
+    @param labels:
     @param title:
     @return: plot
     """
@@ -19,12 +36,14 @@ def plot_learning_curve(data, labels, title):
     plt.xlabel("Step")
     plt.ylabel("FIS score")
 
-    # top = max(max(data[0]['fid10k']), max(data[1]['fid10k']))
-    plt.ylim(bottom=0, top=450)
+    plt.ylim(bottom=-20, top=450)
+    plt.xlim(left=-20, right=320)
+    plt.axis('tight')
 
     plt.grid()
     for idx, el in enumerate(data):
         plt.plot(el['snapshot'], el['fid10k'], 'o-',  label=labels[idx])
+        annotate_min(el['fid10k'], idx)
 
     plt.legend(loc="best")
 
@@ -33,7 +52,7 @@ def plot_learning_curve(data, labels, title):
 
 # opening the CSV file
 data_style = pd.read_csv('scores/FIDScore_Stylegan2_300kimg.csv', delimiter=" ")
-data_ganfsimpnat = pd.read_csv('scores.FIDScore_GanformerSimplexNoAtt_300kimg.csv', delimiter=" ")
+data_ganfsimpnat = pd.read_csv('scores/FIDScore_GanformerSimplexNoAtt_300kimg.csv', delimiter=" ")
 
 labels = ["StyleGAN2", "GANformer with Simplex attention \n(no discriminator attention)"]
 title = "Learning Performance"

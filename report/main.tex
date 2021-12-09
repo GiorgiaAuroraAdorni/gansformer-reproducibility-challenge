@@ -616,9 +616,6 @@
 	%	Refer to the Reproducibility Challenge template for hints on how to structure this in case you are 
 	%	trying to replicate someone else's results.
 	
-	They evaluate the models along commonly used metrics such as FID, IS, and Precision \& Recall 
-	scores
-	
 	Sample images from different points in training are based on the same sampled latent vectors, 
 	thereby showing how the image evolves during the training.
 		
@@ -629,7 +626,6 @@
 	These results show how the GANformer, especially when using duplex attention, manages to learn a 
 	lot faster than competing approaches, generating impressive images early in the training
 	
-	%TODO
 	\begin{figure*}[htb]				
 		\centering
 		\includegraphics[width=.7\linewidth]{../src/trained_network/out_imgs/FIDscore.pdf}
@@ -675,9 +671,11 @@
 			\caption{GANformer model with Simplex attention and discriminator without attention.}
 		\end{subfigure}
 		\vspace{3mm}
-		\caption{\textbf{Simple $z$ interpolation using of the various models}.}\label{fig:interpolation}
+		\caption{\textbf{Simple $\mathbf{z}$ interpolation using of the various 
+		models}.}\label{fig:interpolation}
 	\end{figure}
 
+	Visualisation of the models' comparison throughout the training. 
 
 %	We evaluate the models along commonly used metrics such as FID, IS, and Precision \& Recall 
 %	scores. 
@@ -687,9 +685,6 @@
 	
 %	The more layers attention is used through, the better the model’s performance gets and 
 %	the faster it learns, confirming the effectiveness of the GANformer approach. 
-	
-	
-	visualisation of sample images produced by the five models
 	
 	
 	\section{Discussion and conclusion}%TODO
