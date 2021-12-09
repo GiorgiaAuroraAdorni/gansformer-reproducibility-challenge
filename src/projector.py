@@ -16,7 +16,7 @@ from training import misc
 class Projector:
     def __init__(self):
         self.num_steps                  = 1000
-        self.dlatent_avg_samples        = 10000
+        self.dlatent_avg_samples        = 10
         self.initial_learning_rate      = 0.1
         self.initial_noise_factor       = 0.05
         self.lr_rampdown_length         = 0.25
@@ -62,7 +62,7 @@ class Projector:
 
         # Find dlatent stats.
         self._info('Finding W midpoint and stddev using %d samples...' % self.dlatent_avg_samples)
-        latent_samples = np.random.RandomState(123).randn(self.dlatent_avg_samples, *self._Gs.input_shapes[0][1:])
+        latent_samples = np.random.RandomState(123).randn(self.dlatent_avg_samples, *self._Gs.input_shapes[1:])
         dlatent_samples = self._Gs.components.mapping.run(latent_samples, None,take_dlatents=True)[:, :1, :] # [N, 1, 512]
         # dlatent_samples = self._Gs.run(latent_samples, None, take_dlatents=True )[:, :1, :] # [N, 1, 512]
         print(dlatent_samples.shape)
