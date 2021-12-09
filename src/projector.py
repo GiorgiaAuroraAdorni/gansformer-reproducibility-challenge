@@ -67,7 +67,7 @@ class Projector:
             dlatent_samples = (self._Gs.run(latent_samples, None, return_dlatents=True)[2][:,:1, :1, :]) # [N, 1, 512]
             dlatent_samples = np.reshape(dlatent_samples, [-1,1,dlatent_samples.shape[-1]])
         else:
-            dlatent_samples = self._Gs.component.mapping.run(latent_samples,None)[:,:1,:]
+            dlatent_samples = self._Gs.components.mapping.run(latent_samples,None)[:,:1,:]
         # dlatent_samples = self._Gs.run(latent_samples, None, take_dlatents=True )[:, :1, :] # [N, 1, 512]
         print(dlatent_samples.shape)
         self._dlatent_avg = np.mean(dlatent_samples, axis=0, keepdims=True) # [1, 1, 512]
