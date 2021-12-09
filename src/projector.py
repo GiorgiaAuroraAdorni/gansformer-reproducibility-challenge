@@ -94,16 +94,16 @@ class Projector:
         self._info('Building image output graph...')
         self._dlatents_var = tf.Variable(tf.zeros([self._minibatch_size] + list(self._dlatent_avg.shape[1:])), name='dlatents_var')
         self._noise_in = tf.placeholder(tf.float32, [], name='noise_in')
-        dlatents_noise = tf.random.normal(shape=self._dlatents_var.shape) * self._noise_in
-        self._dlatents_expr = tf.tile(self._dlatents_var + dlatents_noise, [1, self._Gs.components.synthesis.input_shape[1], 1])
-        self._images_expr = self._Gs.components.synthesis.get_output_for(self._dlatents_expr, randomize_noise=False)
+        # dlatents_noise = tf.random.normal(shape=self._dlatents_var.shape) * self._noise_in
+        # self._dlatents_expr = tf.tile(self._dlatents_var + dlatents_noise, [1, self._Gs.components.synthesis.input_shape[1], 1])
+        # self._images_expr = self._Gs.components.synthesis.get_output_for(self._dlatents_expr, randomize_noise=False)
 
-        # Downsample image to 256x256 if it's larger than that. VGG was built for 224x224 images.
-        proc_images_expr = (self._images_expr + 1) * (255 / 2)
-        sh = proc_images_expr.shape.as_list()
-        if sh[2] > 256:
-            factor = sh[2] // 256
-            proc_images_expr = tf.reduce_mean(tf.reshape(proc_images_expr, [-1, sh[1], sh[2] // factor, factor, sh[2] // factor, factor]), axis=[3,5])
+        # # Downsample image to 256x256 if it's larger than that. VGG was built for 224x224 images.
+        # proc_images_expr = (self._images_expr + 1) * (255 / 2)
+        # sh = proc_images_expr.shape.as_list()
+        # if sh[2] > 256:
+        #     factor = sh[2] // 256
+        #     proc_images_expr = tf.reduce_mean(tf.reshape(proc_images_expr, [-1, sh[1], sh[2] // factor, factor, sh[2] // factor, factor]), axis=[3,5])
 
         # Loss graph.
         self._info('Building loss graph...')
