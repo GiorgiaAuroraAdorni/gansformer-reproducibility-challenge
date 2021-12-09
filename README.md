@@ -1,7 +1,7 @@
 # gansformer-reproducibility-challenge
 
 > Project for Advance Topic in Machine Learning course @ USI 21/22.  
-> See https://github.com/GiorgiaAuroraAdorni/gansformer-reproducibility-challenge and *XXX* for datasets and models.
+> See https://github.com/GiorgiaAuroraAdorni/gansformer-reproducibility-challenge, https://drive.google.com/drive/folders/1sqHD-X4mLOOkoT-xJvWGdPlwxb5et0kA?usp=sharing for models and https://drive.google.com/drive/folders/1ZFfO4HVINH-aDQbgLscJxNTqGLEIOMZv?usp=sharing for datasets.
 
 ### Contributors
 
@@ -22,7 +22,7 @@ Clone our repository and install the requirements
 
 ```sh
 $ git clone https://github.com/GiorgiaAuroraAdorni/gansformer-reproducibility-challenge
-$ cd gansformer-reproducibility-challenge
+$ cd gansformer-reproducibility-challenge/src
 $ pip install -r requirements.txt
 ```
 
