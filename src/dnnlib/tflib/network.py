@@ -389,7 +389,6 @@ class Network:
         assert output_transform is None or util.is_top_level_function(output_transform["func"])
         output_transform, dynamic_kwargs = _handle_legacy_output_transforms(output_transform, dynamic_kwargs)
         num_items = in_arrays[0].shape[0]
-        print(f"Number of Items {num_items}")
         if minibatch_size is None:
             minibatch_size = num_items
 
