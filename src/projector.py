@@ -99,9 +99,10 @@ class Projector:
         self._noise_in = tf.placeholder(tf.float32, [], name='noise_in')
         dlatents_noise = tf.random.normal(shape=self._dlatents_var.shape) * self._noise_in
         self._dlatents_expr = tf.tile(self._dlatents_var + dlatents_noise, [1, self._Gs.components.synthesis.input_shape[1], 1])
-        print(self._dlatents_expr.shape)
-        print(self._Gs.components.synthesis.input_shape[0][1])
-        self._images_expr = self._Gs.components.synthesis.get_output_for(self._dlatents_expr, randomize_noise=False)
+        if ganformer:
+            self._images_expr = self._Gs.get_output_for(self._dlatents_expr, randomize_noise=False)[0]
+        else:
+            self._images_expr = self._Gs.components.synthesis.get_output_for(self._dlatents_expr, randomize_noise=False)
 
         # Downsample image to 256x256 if it's larger than that. VGG was built for 224x224 images.
         proc_images_expr = (self._images_expr + 1) * (255 / 2)
