@@ -197,6 +197,10 @@ class Network:
 
     def get_output_for(self, *in_expr: TfExpression, return_as_list: bool = False, **dynamic_kwargs) -> Union[TfExpression, List[TfExpression]]:
         """Construct TensorFlow expression(s) for the output(s) of this network, given the input expression(s)."""
+        if len(in_expr) > self.num_inputs:
+            in_expr = in_expr[:self.num_inputs]
+        if len(in_expr) < self.num_inputs:
+            in_expr = in_expr + (None,) * (self.num_inputs - len(in_expr))
         assert len(in_expr) == self.num_inputs
         assert not all(expr is None for expr in in_expr)
 
@@ -375,13 +379,17 @@ class Network:
             assume_frozen:      Improve multi-GPU performance by assuming that the trainable parameters will remain changed between calls.
             dynamic_kwargs:     Additional keyword arguments to be passed into the network build function.
         """
-        
+        if len(in_arrays) > self.num_inputs:
+            in_arrays = in_arrays[:self.num_inputs]
+        if len(in_arrays) < self.num_inputs:
+            in_arrays = in_arrays + (None, ) * (self.num_inputs - len(in_arrays))
         assert len(in_arrays) == self.num_inputs
         assert not all(arr is None for arr in in_arrays)
         assert input_transform is None or util.is_top_level_function(input_transform["func"])
         assert output_transform is None or util.is_top_level_function(output_transform["func"])
         output_transform, dynamic_kwargs = _handle_legacy_output_transforms(output_transform, dynamic_kwargs)
         num_items = in_arrays[0].shape[0]
+        print(f"Number of Items {num_items}")
         if minibatch_size is None:
             minibatch_size = num_items
 
