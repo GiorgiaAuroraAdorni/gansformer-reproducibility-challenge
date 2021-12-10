@@ -140,55 +140,68 @@
 	discriminator models use Convolutional Neural Networks (CNNs).
 	
 	\subsection{StyleGAN2}\label{sec:stylegan}%TODO fixme
-	StyleGAN are a re-design of the GANs generator architecture, aimed at control the image synthesis 
-	process \cite{karras2019style}.
+	StyleGAN are a re-design of the GANs generator architecture, which aim is to control the image 
+	synthesis process \cite{karras2019style}.
+	
 	The StyleGAN approach departs from the design of a common generator network, consisting in a 
-	multi-layer CNN that receives a randomly sampled vector $z$ and transforms it into an image, and, 
-	instead, it introduces a feed-forward mapping network that outputs an intermediate vector $w$, 
-	which in turn interacts directly with each convolution through the synthesis network, globally 
-	controlling the feature maps’ statistics at every layer.
+	multi-layer CNN.
+	A traditional GAN generator feeds the latent code $z$ though the input layer only, to start the 
+	up-sampling process.
+	\citet{karras2019style} introduce a feed-forward mapping network $f : Z \rightarrow W$ which 
+	processes the latent code $z$ in the input latent space $Z$, and output an intermediate latent 
+	vector $w \in W$. 
+	$w$, in turn, interacts directly with each convolution through the synthesis network  $g$ and, in 
+	particular, with the \textit{Adaptive Instance Normalisation (AdaIN)} \cite{huang2017arbitrary} aligns 
+	the mean and variance of the content features with those of the style features, meaning that ia able 
+	to globally controls these parameters and so the strength of image features at different scales. 
 	
-	As mentioned by \citet{karras2020analyzing}, <<this generator starts from a learned constant 
-	input and adjusts the ``style'' of the image at each convolution layer based on the latent code, 
-	therefore directly controlling the strength of image features at different scales. 
-	Combined with noise injected directly into the network, this architectural change leads to automatic, 
-	unsupervised separation of high-level attributes (e.g., pose, identity) from stochastic variation (e.g., 
-	freckles, hair) in the generated images, and enables intuitive scale-specific mixing and interpolation 
-	operations>>.
-	
-	The generator embeds the input latent code into an intermediate latent space. In particular, the input 
-	latent space must follow the probability density of the training data, while the intermediate latent 
-	space is free from that restriction and is therefore allowed to be disentangled. 
-
-	Traditionally, the latent code is provided to the generator through an input layer of a feed-forward 
-	network. \citet{karras2020analyzing} depart from this design by omitting the input layer altogether 
-	and starting from a learned constant instead. 
-	Given a latent code $z$ in the input latent space $Z$, a non-linear mapping network $f : Z 
-	\rightarrow W$ first produces $w \in W $.
-	Learned affine transformations then specialize $w$ to styles $y = (y_s, y_b)$ that control adaptive 
-	instance normalization (AdaIN) \cite{?} operations after each convolution layer of the synthesis 
-	network $g$. The AdaIN operation is defined as:
+	The \textit{AdaIN} operation is defined as:
 	\begin{equation}
 		\label{e:adain}
-		\mathsf{AdaIN}(x_i, y) = y_{s, i} \frac{x_i - \mu(x_i)}{\sigma (x_i)} + y_{b,i} \mbox{,}
+		\mathsf{AdaIN}(x, y) = \sigma(y) \bigg(\frac{x - \mu(x)}{\sigma (x)} \bigg) + \mu (y) \mbox{,}
 	\end{equation}
-	where each feature map $x_i$ is normalized separately, and then scaled and biased using the 
-	corresponding scalar components from style $y$. Thus the dimensionality of $y$ is twice the 
-	number of feature maps on that layer.
-	
-	Moreover, they provide the generator with a direct means to generate stochastic detail by 
-	introducing explicit noise inputs. 
+	where $x$ is the content input, $y$ a style input, and the channel-wise mean and variance of $x$ 
+	are aligned to match those of $y$.
 
+	Moreover, by introducing explicit Gaussian noise inputs after each convolution, 
+	\citet{karras2019style} provide the generator with a direct means to generate stochastic detail: an 
+	automatic and unsupervised separation of high-level attributes (e.g., pose, identity) from stochastic 
+	variation (e.g., freckles, hair) is obtained in the generated images, and intuitive scale-specific mixing 
+	and interpolation operations are enabled.
+	
+	StyleGAN2 \cite{karras2020analyzing} are a revisiting of the architecture of the StyleGAN. 
+	In particular, some redundant operations have been removed from the original StyleGAN architecture.
+	Bias and noise are operations which might have conflicting interests, and their application within the 
+	style block caused their relative impact to be inversely proportional to the current style’s 
+	magnitudes. For this reason, they have been moved outside the style block and separated, allowing 
+	to obtain more predictable results.
+	Furthermore, after this change, the mean is no longer necessary, but it is sufficient for the 
+	normalisation and modulation to operate on the standard deviation alone.
+	Moreover, the application of bias, noise, and normalization to the constant input has been safely 
+	removed. 
+	
+	%TODO from here on the text does not convince me
+	\textcolor{red}{
+	When the style block consists in a modulation, a convolution, and a normalisation operation, it is 
+	possible to restructure the AdaIN has a demodulation operation, which is applied to the weights 
+	associated with each convolution layer. 
+	AdaIN uses different scale and shift parameters to align different areas of $w$ — the activations of 
+	intermediate activations — with different regions of the feature map (either within each feature map 
+	or via grouping features channel-wise by spatial location), while weight demodulation takes the scale 
+	and shift parameters out of a sequential computation path, instead baking scaling into the 
+	parameters of convolutional layers.}
+	
+	\textcolor{red}{
 	The StyleGAN2 architecture makes it possible to control the image synthesis via scale-specific 
 	modifications to the styles. In particular, this approach attains layer-wise decomposition of visual 
 	properties, allowing StyleGAN to control global aspects of the picture such as pose, lighting 
-	conditions or colour schemes, in a coherent manner over the entire image. 
+	conditions or colour schemes, in a coherent manner over the entire image.}
 	
+	\textcolor{red}{
 	But while StyleGAN successfully disentangles global properties, it is more limited in its ability to 
 	perform spatial decomposition, as it provides no direct means to control the style of a localized 
-	regions within the generated image.
-	
-	
+	regions within the generated image.}
+
 	\subsection{Transformers}%TODO fixme
 	Transformers are deep learning models based on an \textit{attention mechanism} designed to handle 
 	sequential input data and evaluate the relationship between each input-output item 
@@ -351,7 +364,6 @@
 	arises from the generator.
 	%TODO until here
 	
-
 	
 	\subsubsection{Simplex attention}%TODO fixme: reduce
 	As already mentioned, simplex attention distributes information in a single direction over the 
@@ -701,7 +713,8 @@
 
 	Visualisation of the models' comparison throughout the training. 
 
-%	We evaluate the models along commonly used metrics such as FID, IS, and Precision \& Recall 
+%	We evaluate the models along commonly used metrics such as FID, Inception Score IS, and 
+%Precision \& Recall 
 %	scores. 
 	
 %	We compute each metric 10 times over 50k samples, using different random seeds, and report their 
