@@ -34,7 +34,7 @@ def plot_learning_curve(data, labels, title):
     plt.title(title, fontweight="bold")
 
     plt.xlabel("Step")
-    plt.ylabel("FIS score")
+    plt.ylabel("FID score")
 
     plt.ylim(bottom=-20, top=450)
     plt.xlim(left=-20, right=320)
