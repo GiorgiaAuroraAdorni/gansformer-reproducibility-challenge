@@ -52,19 +52,25 @@ def plot_learning_curve(data, labels, title):
 
 
 # opening the CSV file
-data_style = pd.read_csv('scores/FIDScore_Stylegan2_300kimg.csv', delimiter=" ")
-data_ganfsimpnatt = pd.read_csv('scores/FIDScore_GanformerSimplexNoAtt_300kimg.csv', delimiter=" ")
-data_ganfsimpatt = pd.read_csv('scores/FIDScore_GanformerSimplexAtt_300kimg.csv', delimiter=" ")
+data_stylegan = pd.read_csv('scores/FIDScore_Stylegan2_300kimg.csv', delimiter=" ")
+data_ganf_simp_n_att = pd.read_csv('scores/FIDScore_GanformerSimplexNoAtt_300kimg.csv', delimiter=" ")
+data_ganf_simp_att = pd.read_csv('scores/FIDScore_GanformerSimplexAtt_300kimg.csv', delimiter=" ")
+data_ganf_dupl_n_att = pd.read_csv('scores/FIDScore_GanformerDuplexNoAtt_300kimg.csv', delimiter=" ")
+# data_ganf_dupl_att = pd.read_csv('scores/FIDScore_GanformerDuplexAtt_300kimg.csv', delimiter=" ")
 
 labels = ["StyleGAN2",
           "GANformer with Simplex attention \n(no discriminator attention)",
-          "GANformer with Simplex attention \n(and discriminator attention)"]
+          "GANformer with Simplex attention \n(and discriminator attention)",
+          "GANformer with Duplex attention \n(no discriminator attention)"]
+            # "GANformer with Duplex attention \n(and discriminator attention)"]
 
 title = "Learning Performance"
 # Cross validation with 100 iterations to get smoother mean test and train
 # score curves, each time with 20% data randomly selected as a validation set.
 
-plot_learning_curve([data_style, data_ganfsimpnatt, data_ganfsimpatt], labels, title)
+data = [data_stylegan, data_ganf_simp_n_att, data_ganf_simp_att, data_ganf_dupl_n_att]
+# data = [data_stylegan, data_ganf_simp_n_att, data_ganf_simp_att, data_ganf_dupl_n_att, data_ganf_dupl_att]
+plot_learning_curve(data, labels, title)
 
 plt.savefig('out_imgs/FIDscore.pdf', dpi=600)
 plt.close()
