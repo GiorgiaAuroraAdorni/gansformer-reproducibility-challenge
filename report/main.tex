@@ -20,10 +20,9 @@
 \usepackage{bm}
 \usepackage{mathtools} 
 \usepackage {xcolor}
-\usepackage[section]{placeins} % Prevent figures from being moved across sections
+%\usepackage[section]{placeins} % Prevent figures from being moved across sections
 % Reset subcaption counters at the start of figure/table float
 \usepackage{subcaption}
-
 
 \title{ATML Report}
 
@@ -41,7 +40,6 @@
 \begin{document}
 	
 	\maketitle
-	
 	\begin{abstract}
 		%Train a GAN with Transformer-like architecture
 		%Concise and self-contained description of your project, motivation and main findings.
@@ -58,7 +56,7 @@
 		network, the GANformer, proposed in  ``\emph{Generative adversarial Transformers}'' by 
 		\citet{hudson2021generative}.
 	\end{abstract}
-	
+
 	%	\section*{General notes}
 	%	
 	%	The report should be written as an article intended to present the findings of your work. Your 
@@ -662,7 +660,7 @@
 	These results show how the GANformer, especially when using duplex attention, manages to learn a 
 	lot faster than competing approaches, generating impressive images early in the training
 	
-	\begin{figure*}[htb]				
+	\begin{figure*}[htpb]				
 		\centering
 		\includegraphics[width=.7\linewidth]{../src/trained_network/out_imgs/FIDscore.pdf}
 		\caption{\textbf{Comparison between the StyleGAN2 and the GANformer models.} We evaluate 
@@ -678,7 +676,7 @@
 	For this specific application, FID is used to measures the feature distance between the real and the 
 	generated images, but it can be used for measuring the distance between two distributions as well.
 
-	\begin{figure}[ht]
+	\begin{figure}[htpb]
 		\centering
 		\begin{subfigure}{\linewidth}
 			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/random_Stylegan2_300kimg.png}
@@ -694,7 +692,7 @@
 		\caption{\textbf{Visualisation of 9 images generated with the various models}.}\label{fig:random}
 	\end{figure}
 
-	\begin{figure}[ht]
+	\begin{figure}[htpb]
 		\centering
 		\begin{subfigure}{\linewidth}
 			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/interpolation_Stylegan2_300kimg.png}
