@@ -116,7 +116,7 @@
 	distribution. 
 	
 	The classic architecture is composed by two main neural networks: the \textit{generator} ${G(z)}$, 
-	which take as input a sample from the latent space, or a vector drawn randomly from a 
+	which take as input a sample from the latent space $z$, or a vector drawn randomly from a 
 	Gaussian distribution, and use it to generate new plausible examples in the problem domain — 
 	images in our case — , and the \textit{discriminator} ${D(x)}$, which takes an example from the 
 	domain as input, and predicts a binary class label which classify the examples as real (coming from 
@@ -255,7 +255,6 @@
 	$W_i^K \in \mathbb{R}^{d_{\text{model}}\times d_k}$, $W_i^V \in 
 	\mathbb{R}^{d_{\text{model}}\times d_v}$ and $W^O \in \mathbb{R}^{hd_v \times 
 	d_{\text{model}}}$.
-
 	
 	%TODO repetition: integrate in the previous text
 	\textcolor{blue}{
@@ -282,39 +281,48 @@
 	%	presented in the original paper.
 	
 	\subsection{Generative Adversarial Transformers}%TODO fixme	
-	The Generative Adversarial Transformer (GANformer), as presented in \cite{hudson2021generative}, 
-	is a type of GAN, which involves two networks: the \textit{generator} (${G}$), which maps a sample 
-	$z$ from the latent space to the output space (e.g., producing an image $x$), and the 
-	\textit{discriminator}(${D}$) which receives images originated from the dataset or the generator and 
-	seeks to discern between real and fake samples. 
+	The Generative Adversarial Transformers (GANsformer), as presented in 
+	\cite{hudson2021generative}, are models which combine GANs and the transformers to generate 
+	better and more realistic examples.
 	
-	As shown in Section \ref{sec:gan}, the two networks compete with each other through a minimax 
-	game until reaching an equilibrium. 
+	GANs are exploited in this architecture since they work with CNNs, and for this reason they are 
+	powerful generators for the overall style of the image, since by nature they merge the local 
+	information of the pixels together with the general information regarding the image. 
+	However, they are less powerful regarding small details of localised regions within the generate 
+	image itself, since they miss out on the long range interaction of the faraway pixel.
 	
-	%TODO this part is from the readme of te repo
-	In the generator network, the latent $z$ has a shape 
-	[\texttt{batch\_size}, \texttt{component\_num}, \texttt{latent\_dim}]. 
-	%\texttt{component\_num} is = 1 for the StyleGAN while >1 for the GANformer.
-	The latent components are defined by splitting $z$ along the second dimension to obtain $z_1, 
-	\dots, z_k$ latent components.
+	Styegan2...
 	
-	The generator likewise is composed of two parts:
-	\begin{enumerate}
-		\item The \textit{mapping network}, which consists in a series of feed-forward layers, whose 
-		objective is to convert the sampled latents from a normal distribution $z$ to the intermediate 
-		space $w$. The $k$ latent components either are mapped independently or interact with each 
-		other through self-attention.
-		\item The \textit{synthesis network} is composed by multiple layers of convolution where the 
-		images features begin from a small constant/sampled grid and up-sampling until reaching the 
-		desirable resolution.
-		After each convolution, the image features are modulated by the intermediate latent vectors $w$, 
-		meaning that their variance and bias are controlled. 
-		While in StyleGAN2 a single global $w$ vector controls all the features equally, the GANformer 
-		uses attention so that the $k$ latent components specialise to control different regions in the 
-		image to create it cooperatively, and therefore perform better especially in generating images 
-		depicting multi-object scenes, allowing also for a flexible and dynamic style modulation at the 
-		region level.
-	\end{enumerate}
+	Accordingly, GANsformer take advantage of the transformers attention mechanism to make the 
+	StyleGAN2 architecture even more powerful: the integration of attention in the architecture allows 
+	the network to draw global dependencies between input and output, and understand the context of 
+	the image thanks to the transformer's strength for long-range interactions.
+	Thus, rather than focusing on using global information and controlling all features globally, 
+	transformer use attention to propagate information from the local pixels to the global high-level 
+	representation and vice versa. 
+	
+	%TODO from here on the text does not convince me
+	The \textit{bipartite transformer} structure computes \textit{soft attention}, iteratively aggregating 
+	and disseminating information between the generated image features and a compact set of 
+	\textit{latent variables} enable bidirectional interaction between these dual representations. 
+	
+	The \textit{transformer network} corresponds to the \textit{multi-layer bidirectional transformer 
+	encoder} (BERT) described by \citet{devlin2019bert}, which interleaves \textit{multi-head 
+	self-attention} and \textit{feed-forward layers}.
+	Each pair of self-attention and feed-forward layers is intended as a \textit{transformer layer}, hence, 
+	a transformer is a stack of several such layers. 
+	
+	The \textit{self-attention layer} considers all pairwise relations among the input elements, so to 
+	update each single element by attending to all the others. 
+	The \textit{bipartite transformer} generalises this formulation, featuring instead a bipartite graph 
+	between two groups of variables — in the GAN case, latents and image features. 
+	There are two attention operations that could be computed over the bipartite graph, depending on 
+	the direction in which information propagates, 
+	\begin{enumerate*}
+		\item [(1)] \textit{simplex attention} permits communication either in one way only, in the 
+		generative context, from the latents to the image features, and
+		\item [(2)] \textit{duplex attention} which enables it both top-down and bottom-up ways.
+	\end{enumerate*}
 	
 	Attention can be used in several ways: 
 	\begin{enumerate}
@@ -331,6 +339,9 @@
 		features which becomes very high for high-resolutions.
 	\end{enumerate}
 
+	In particular, the attention layers are added in between the convolutional layers of both the 
+	generator and discriminator.
+	
 	The discriminator model performs multiple layers of convolution downsampling on the image, 
 	reducing the representation's resolution gradually until making final prediction. 
 	Optionally, attention can be incorporated into the discriminator as well where it has multiple $k$ 
@@ -340,28 +351,7 @@
 	arises from the generator.
 	%TODO until here
 	
-	The main difference between the GANformer and a GAN is that, instead of relying on multiple layers 
-	of convolution, a \textit{bipartite transformer} structure is used to compute \textit{soft attention}, 
-	that iteratively aggregates and disseminates information between the generated image features and 
-	a compact set of \textit{latent variables} enable bidirectional interaction between these dual 
-	representations. 
-	
-	The \textit{transformer network} corresponds to the \textit{multi-layer bidirectional transformer 
-	encoder} (BERT) described by \citet{devlin2019bert}, which interleaves \textit{multi-head 
-	self-attention} and \textit{feed-forward layers}.
-	Each pair of self-attention and feed-forward layers is intended as a \textit{transformer layer}, hence, 
-	a transformer is a stack of several such layers. 
-	The \textit{self-attention layer} considers all pairwise relations among the input elements, so to 
-	update each single element by attending to all the others. 
-	The \textit{bipartite transformer} generalises this formulation, featuring instead a bipartite graph 
-	between two groups of variables — in the GAN case, latents and image features. 
-	There are two attention operations that could be computed over the bipartite graph, depending on 
-	the direction in which information propagates, 
-	\begin{enumerate*}
-		\item [(1)] \textit{simplex attention} permits communication either in one way only, in the 
-		generative context, from the latents to the image features, and
-		\item [(2)] \textit{duplex attention} which enables it both top-down and bottom-up ways.
-	\end{enumerate*}
+
 	
 	\subsubsection{Simplex attention}%TODO fixme: reduce
 	As already mentioned, simplex attention distributes information in a single direction over the 
@@ -435,6 +425,25 @@
 	The StyleGAN2 model \cite{karras2019style, karras2020analyzing}, presented in Section 
 	\ref{sec:stylegan}, is used as a starting point for the GAN design. 
 		
+
+	The generator likewise is composed of two parts:
+	\begin{enumerate}
+		\item The \textit{mapping network}, which consists in a series of feed-forward layers, whose 
+		objective is to convert the sampled latents from a normal distribution $z$ to the intermediate 
+		space $w$. The $k$ latent components either are mapped independently or interact with each 
+		other through self-attention.
+		\item The \textit{synthesis network} is composed by multiple layers of convolution where the 
+		images features begin from a small constant/sampled grid and up-sampling until reaching the 
+		desirable resolution.
+		After each convolution, the image features are modulated by the intermediate latent vectors $w$, 
+		meaning that their variance and bias are controlled. 
+		While in StyleGAN2 a single global $w$ vector controls all the features equally, the GANformer 
+		uses attention so that the $k$ latent components specialise to control different regions in the 
+		image to create it cooperatively, and therefore perform better especially in generating images 
+		depicting multi-object scenes, allowing also for a flexible and dynamic style modulation at the 
+		region level.
+	\end{enumerate}
+
 	The bipartite transformer offers a solution to the StyleGAN limitation in its ability to perform spatial 
 	decomposition which leaded to the impossibility of controlling the style of a localised regions within 
 	the generated image.
