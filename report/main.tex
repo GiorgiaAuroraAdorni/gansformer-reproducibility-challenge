@@ -711,6 +711,33 @@
 
 	Visualisation of the models' comparison throughout the training. 
 
+
+    Comparison of results
+    
+    \begin{table}[]
+        \caption{Original paper's reported results (mean of results over the 4 Datasets used by the authors)}
+        \label{tab:my-table}
+        \begin{tabular}{|l|l|l|l|l|}
+        \hline
+        Model                        & FID   & IS   & Precision  & Recall  \\ \hline
+        StyleGAN2                    & 11.2925 & 2.7425 & 52.015      & 23.9775   \\ \hline
+        GANformer, Simplex attention & 10.2925 & 2.82   & 56.7625     & 18.205    \\ \hline
+        GANformer, Duplex attention  & 7.215   & 2.7825 & 55.4475     & 33.9375   \\ \hline
+        \end{tabular}
+        \end{table}
+
+    \begin{table}[]
+		\caption{Our results (One dataset)}
+		\label{tab:my-table}
+		\begin{tabular}{|l|l|l|l|l|}
+		\hline
+		Model                        & FID   & IS   & Precision  & Recall  \\ \hline
+		StyleGAN2                    & 24.7722 & 2.5001 & todo        & todo      \\ \hline
+		GANformer, Simplex attention & 28.1098 & 2.5806 & 0.0015      & 0.0076    \\ \hline
+		GANformer, Duplex attention  & todo    & todo   & todo        & todo      \\ \hline
+		\end{tabular}
+		\end{table}
+
 %	We evaluate the models along commonly used metrics such as FID, Inception Score IS, and 
 %Precision \& Recall 
 %	scores. 
