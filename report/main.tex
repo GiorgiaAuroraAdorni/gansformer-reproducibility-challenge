@@ -668,25 +668,72 @@
 	%	
 	%	Refer to the Reproducibility Challenge template for hints on how to structure this in case you are 
 	%	trying to replicate someone else's results.
+	In this section we show and comment our results while also comparing them to the original GANFormer paper.
+	We start by evaluating the 2 presented variations of the GANFormer and Stylegan2 over a set of 4 metrics.
+	To have a fair comparison, the 3 image synthesis methods are run for the same amount of iterations and the same Dataset;
+	The results are shown in table 2.
+	To express the improvement over Stylegan2, an difference factor of FID is positioned alongside the scores.
 	
-	Sample images from different points in training are based on the same sampled latent vectors, 
-	thereby showing how the image evolves during the training.
-		
-	For CLEVR and Cityscapes, we present results after training to generate 100k, 200k, 500k, 1m, and 
-	2m samples. For the Bedroom case, we present results after 500k, 1m, 2m, 5m and 10m generated 
-	samples during training
+	\begin{table}[htb]
+    	\centering
+		\caption{Comparison between the GANformer(simplex and duplex) and competing Stylegan2.}
+		\label{tab:our-results}
+		\vspace{3mm}
+		\small
+		\begin{tabular}{l|rrrrr}
+			\toprule
+			Model                        & FID   & IS & Precision  & Recall & FID Improvement compared to Stylegan2(percent)\\ 
+			\midrule
+			StyleGAN2                    &  24.7722 & 2.5001 & 0.0018 & 0.0211 & 0 \\ 
+			GANformer, Simplex attention & 28.1098 & 2.5806 & 0.0015 & 0.0076 & -13.4732 \\ 
+			GANformer, Duplex attention  & 374.1763 & 1.3966 & 0.000000 & 0.000000 & -1410.47  \\ 
+			\bottomrule
+		\end{tabular}
+	\end{table}
 	
-	These results show how the GANformer, especially when using duplex attention, manages to learn a 
-	lot faster than competing approaches, generating impressive images early in the training
+	Unexpectedly, the novel GANformer with Duplex attention, is considerably worse than the baseline on all aspects with a staggering -1410.47 percent deterioration in FID score.
+	To investigate this further, a similar representation is recreated in Table 3 using the original paper findings for the same metrics and with a mean of the scores spanning the 4 used Datasets.
 	
-	\begin{figure*}[htpb]				
-		\raggedleft
-		\includegraphics[width=.85\linewidth]{../src/trained_network/out_imgs/FIDscore.pdf}
-		\caption{\textbf{Comparison between the StyleGAN2 and the GANformer models.} We evaluate 
-		the models according to FID score along 300k image samples. The score is computed every 
-		sixteen checkpoints.}
-		\label{fig:performance}
-	\end{figure*}
+	\begin{table}[htb]
+    	\centering
+        \caption{Original paper's reported results (mean of results over the 4 Datasets used by the authors)}
+        \label{tab:orig-results}
+        \vspace{3mm}
+        \small
+        \begin{tabular}{l|rrrrr}
+	        \toprule
+	        Model                        & FID  & IS & Precision  & Recall & FID Improvement compared to Stylegan2(percent)\\ 
+	        \midrule
+	        StyleGAN2                    & 11.2925 & 2.7425 & 52.015      & 23.9775 & 0 \\ 
+	        GANformer, Simplex attention & 10.2925 & 2.82   & 56.7625     & 18.205  & +8.85544 \\ 
+	        GANformer, Duplex attention  & 7.215   & 2.7825 & 55.4475     & 33.9375 & +36.108 \\ 
+	        \bottomrule
+        \end{tabular}
+        \end{table}
+	
+    It is noteworthy to state that in the code given by the authors, attention seems to be only optionally used in the discriminator, prompting us to implement 2 variations of the GANsformer not openly discussed in CITATION.
+    We use the GANsformer paradigm for the generator and a vanilla Stylegan2 discriminator and obtain the results visible in Table 4.
+    
+    \begin{table}[htb]
+    	\centering
+        \caption{Comparison between the GANformer(simplex and duplex) both with and without attention on the Discriminator and competing Stylegan2}
+        \label{tab:orig-results}
+        \vspace{3mm}
+        \small
+        \begin{tabular}{l|rrrrr}
+	        \toprule
+	        Model                        & FID  & IS & Precision  & Recall & FID Improvement(percent)\\ 
+	        \midrule
+	        StyleGAN2                    &  24.7722 & 2.5001 & 0.0018 & 0.0211 & 0 \\ 
+			GANformer, Simplex attention & 28.1098 & 2.5806 & 0.0015 & 0.0076 & -13.4732 \\ 
+			GANformer, Duplex attention  & 374.1763 & 1.3966 & 0.000000 & 0.000000 & -1410.47  \\ 
+	        GANformer, Sim. attention/Stylegan2 disc. & 19.0919 &  2.6204  &  0.0035    & 0.0476  & +22.9301 \\ 
+	        GANformer, Dup. attention/Stylegan2 disc.  &  24.8067  & 2.6240 &   0.0035   & 0.0211 & -0.139269 \\ 
+	        \bottomrule
+        \end{tabular}
+        \end{table}
+        
+    
 	
 	The Frechet Inception Distance (FID) is one of the most popular metrics for evaluating GANs, which 
 	provides stable and reliable indications of \textit{image fidelity} and \textit{diversity}. 
@@ -694,7 +741,21 @@
 	points along the curves. 
 	For this specific application, FID is used to measures the feature distance between the real and the 
 	generated images, but it can be used for measuring the distance between two distributions as well.
-
+	Due to it's relevance, we compare all the created models' FID score over iterations number to both show quality of results over training steps in Figure 4.
+	
+	\begin{figure*}[htpb]				
+		\centering
+		\includegraphics[width=.7\linewidth]{../src/trained_network/out_imgs/FIDscore.pdf}
+		\caption{\textbf{Comparison between the StyleGAN2 and the GANformer models.} We evaluate 
+		the models according to FID score along 300k image samples. The score is computed every 
+		sixteen checkpoints.}
+		\label{fig:performance}
+	\end{figure*}
+	
+	\\
+	COMMENT ON RESULTS
+	\\
+	Finally, to visualize our findings in a less empirical but more human fashion, we have used random seeds to create latent inputs and visualized the resulting images generated by the baseline Stylegan2 and all 4 presented variations of the GANformer in figures 5 and 6.
 	\begin{figure}[htpb]
 		\centering
 		\begin{subfigure}{\linewidth}
@@ -727,55 +788,10 @@
 		\caption{\textbf{Simple $\mathbf{z}$ interpolation using of the various 
 		models}.}\label{fig:interpolation}
 	\end{figure}
-
-	Visualisation of the models' comparison throughout the training. 
-
-
-    Comparison of results
     
-    \begin{table}[htb]
-    	\centering
-        \caption{Original paper's reported results (mean of results over the 4 Datasets used by the authors)}
-        \label{tab:orig-results}
-        \vspace{3mm}
-        \small
-        \begin{tabular}{l|rrrr}
-	        \toprule
-	        Model                        & FID  & IS & Precision  & Recall \\ 
-	        \midrule
-	        StyleGAN2                    & 11.2925 & 2.7425 & 52.015      & 23.9775   \\ 
-	        GANformer, Simplex attention & 10.2925 & 2.82   & 56.7625     & 18.205    \\ 
-	        GANformer, Duplex attention  & 7.215   & 2.7825 & 55.4475     & 33.9375   \\ 
-	        \bottomrule
-        \end{tabular}
-        \end{table}
-
-    \begin{table}[htb]
-    	\centering
-		\caption{Our results (One dataset)}
-		\label{tab:our-results}
-		\vspace{3mm}
-		\small
-		\begin{tabular}{l|rrrr}
-			\toprule
-			Model                        & FID   & IS & Precision  & Recall \\ 
-			\midrule
-			StyleGAN2                    & 24.7722 & 2.5001 & todo        & todo      \\ 
-			GANformer, Simplex attention & 28.1098 & 2.5806 & 0.0015      & 0.0076    \\ 
-			GANformer, Duplex attention  & todo    & todo   & todo        & todo      \\ 
-			\bottomrule
-		\end{tabular}
-	\end{table}
-
-%	We evaluate the models along commonly used metrics such as FID, Inception Score IS, and 
-%Precision \& Recall 
-%	scores. 
-	
-%	We compute each metric 10 times over 50k samples, using different random seeds, and report their 
-%	average.
-	
-%	The more layers attention is used through, the better the model’s performance gets and 
-%	the faster it learns, confirming the effectiveness of the GANformer approach. 
+    \\
+	COMMENT ON RESULTS
+	\\
 	
 	\clearpage
 	
