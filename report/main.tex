@@ -178,30 +178,33 @@
 	
 	
 	\subsection{Transformers}%TODO fixme
-	Transformers are models which avoid using \textit{sequence-aligned RNNs} or \textit{convolution} 
-	and instead rely entirely on an \textit{attention mechanism} to compute representations of its input 
-	and output \cite{vaswani2017attention}.
+	Transformers are deep learning models based on an \textit{attention mechanism} designed to handle 
+	sequential input data and evaluate the relationship between each input-output item 
+	\cite{vaswani2017attention}.
+	This models, unlike Recurrent Neural Networks (RNNs), avoid using convolutions or aligned 
+	sequence, and do not necessarily require ordered input data to be processed. 
 	
 	The architecture is composed by an encoder-decoder structure where, the \textit{encoder} maps an 
 	input sequence of symbol representations $(x_1,\dots, x_n)$ to a sequence of continuous 
 	representations $z = (z_1, \dots, z_n)$, while the  \textit{decoder}, given $z$, generates an 
 	output sequence $(y_1, \dots, y_m)$ of symbols one element at a time. 
+	Each transformer module (encoder-decoder) is connected to each other via feed-forward layers.
 	
-	At each step the model is auto-regressive, consuming the previously generated symbols as 
-	additional input when generating the next.
-	In addition, each transformer module (encoder and decoder) contains $N=6$ identical layers, each 
-	with two sub-layers:
-		\begin{enumerate*}
-			\item[(1)] a \textit{multi-head self-attention mechanism} working in parallel, and 
-			\item[(2)] a \textit{position-wise fully connected feed-forward neural network}, with residual 
-			connections followed by normalisation.
-	\end{enumerate*}
-	Moreover, the decoder self-attention sub-layer has a mask which prevents positions from attending 
-	to subsequent positions (so positional encoding provided as additional input to bottom layer). This, 
-	combined with fact that the output embeddings are offset by one position, ensures that the 
-	predictions for position $i$ can depend only on the known outputs at positions less than $i$.
- 	In addition, the decoder has a third sub-layer, which performs \textit{multi-head attention} over the 
- 	output of the encoder stack. 
+%	At each step the model is auto-regressive, consuming the previously generated symbols as 
+%	additional input when generating the next.
+%		\begin{enumerate*}
+%			\item[(1)] a \textit{multi-head self-attention mechanism} working in parallel, and 
+%			\item[(2)] a \textit{position-wise fully connected feed-forward neural network}, with residual 
+%			connections followed by normalisation.
+%	\end{enumerate*}
+%	Moreover, the decoder self-attention sub-layer has a mask which prevents positions from 
+%attending 
+%	to subsequent positions (so positional encoding provided as additional input to bottom layer). 
+%This, 
+%	combined with fact that the output embeddings are offset by one position, ensures that the 
+%	predictions for position $i$ can depend only on the known outputs at positions less than $i$.
+% 	In addition, the decoder has a third sub-layer, which performs \textit{multi-head attention} over the 
+% 	output of the encoder stack. 
 	
 	An \textit{attention function} \cite{vaswani2017attention}, can be described as mapping a query and 
 	a set of key-value pairs to an output, where the query, keys, values, and output are all vectors. The 
@@ -218,34 +221,29 @@
 		\mathsf{Attention}(Q, K, V) = \mathsf{softmax} \big( \frac{QK^T}{\sqrt{d_k}}\big)V
 	\end{equation}
 	% This is a \textit{dot-product attention} with a scaling factor of $\sqrt{1}$. 
+			
+	Instead of performing a single attention function, transformers use multiple self-attentions, called 
+	\textit{multi-head attention}, allowing the model to jointly attend to information from different 
+	representation subspaces at different positions, learning attention relationship independently	
+	\cite{vaswani2017attention}.
+	\citet{vaswani2017attention} used multiple multi-head attentions stacked on the top of each other, 
+	in this way, the parallel attention layers enables to pass multiple input sequences simultaneously 
+	instead of one at a time, allowing for more parallelisation and therefore reducing training times if you 
+	have access to sufficient computational resources.
 	
-	%TODO maybe remove the following part...
-	\textcolor{red}{
-	Instead of performing a single attention function with $d_\text{model}$-dimensional keys, values 
-	and queries, we found it beneficial to linearly project the queries, keys and values $h$ times with 
-	different, learned linear projections to $d_k$, $d_k$ and $d_v$ dimensions, respectively. On each of 
-	these projected versions of queries, keys and values we then perform the attention function in 
-	parallel, yielding $d_v$-dimensional output values. 
-	These are concatenated and once again projected, resulting in the final values.
-	\textit{Multi-head attention} allows the model to jointly attend to information from different 
-	representation subspaces at different positions. With a single attention head, averaging inhibits 
-	this.}
 	\begin{equation}
 		\label{eqn:multihead}
-		\color{red}{\mathsf{MultiHead}(Q, K, V) = \mathsf{Concat}(\mathsf{head}_1 \dots, 
+		{\mathsf{MultiHead}(Q, K, V) = \mathsf{Concat}(\mathsf{head}_1 \dots, 
 		\mathsf{head}_h) W^O }
 		\mbox{,}
 	\end{equation}
-	\textcolor{red}{
 	where $ \mathsf{head}_i = \mathsf{Attention}(QW_i^Q, KW_i^K , VW_i^V)$, and the 
 	projections are parameter matrices $W_i^Q \in \mathbb{R}^{d_{\text{model}}\times 
 	d_k}$, %TODO $W_i^Q \in \mathbb{R}^{d_{\text{model}}\times d_q}$,  probabile errore
 	$W_i^K \in \mathbb{R}^{d_{\text{model}}\times d_k}$, $W_i^V \in 
 	\mathbb{R}^{d_{\text{model}}\times d_v}$ and $W^O \in \mathbb{R}^{hd_v \times 
 	d_{\text{model}}}$.
-	\citet{vaswani2017attention} employed $h = 8$ parallel attention layers, or heads. For each of these, 
-	$d_k = d_v = d_\text{model}/h = 64$. Due to the reduced dimension of each head, the total 
-	computational cost is similar to that of single-head attention with full dimensionality.}
+
 	
 	%TODO repetition: integrate in the previous text
 	\textcolor{blue}{
