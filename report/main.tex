@@ -224,6 +224,16 @@
 	perform spatial decomposition, as it provides no direct means to control the style of a localized 
 	regions within the generated image.}
 
+%	The \textit{mapping network}, which consists in a series of feed-forward layers, whose 
+%	objective is to convert the sampled latents from a normal distribution $z$ to the intermediate 
+%	space $w$. The $k$ latent components either are mapped independently or interact with each 
+%	other through self-attention.
+%	The \textit{synthesis network} is composed by multiple layers of convolution where the 
+%	images features begin from a small constant/sampled grid and up-sampling until reaching the 
+%	desirable resolution.
+%	After each convolution, the image features are modulated by the intermediate latent vectors $w$, 
+%	meaning that their variance and bias are controlled. 
+
 	\subsection{Transformers}%TODO fixme
 	Transformers are deep learning models based on an \textit{attention mechanism} designed to handle 
 	sequential input data and evaluate the relationship between each input-output item 
@@ -318,13 +328,13 @@
 	\cite{hudson2021generative}, are models which combine GANs and the transformers to generate 
 	better and more realistic examples.
 	
-	GANs are exploited in this architecture since they work with CNNs, and for this reason they are 
-	powerful generators for the overall style of the image, since by nature they merge the local 
-	information of the pixels together with the general information regarding the image. 
+	GANs, and in particular the StyleGAN2 model \cite{karras2020analyzing}, presented in Section 
+	\ref{sec:stylegan} and shown in Figure \ref{fig:styleGAN2}, is used as a starting point for the 
+	GANformer design for the properties it owns as CNN: they are powerful generators for the overall 
+	style of the image, since by nature they merge the local information of the pixels together with the 
+	general information regarding the image. 
 	However, they are less powerful regarding small details of localised regions within the generate 
 	image itself, since they miss out on the long range interaction of the faraway pixel.
-	
-	Styegan2...
 	
 	Accordingly, GANsformer take advantage of the transformers attention mechanism to make the 
 	StyleGAN2 architecture even more powerful: the integration of attention in the architecture allows 
@@ -454,28 +464,14 @@
 	input and distributes it back to the relevant regions. 
 	
 	\subsubsection{The Generator and Discriminator Networks}
-	The StyleGAN2 model \cite{karras2019style, karras2020analyzing}, presented in Section 
-	\ref{sec:stylegan}, is used as a starting point for the GAN design. 
-		
-
-	The generator likewise is composed of two parts:
-	\begin{enumerate}
-		\item The \textit{mapping network}, which consists in a series of feed-forward layers, whose 
-		objective is to convert the sampled latents from a normal distribution $z$ to the intermediate 
-		space $w$. The $k$ latent components either are mapped independently or interact with each 
-		other through self-attention.
-		\item The \textit{synthesis network} is composed by multiple layers of convolution where the 
-		images features begin from a small constant/sampled grid and up-sampling until reaching the 
-		desirable resolution.
-		After each convolution, the image features are modulated by the intermediate latent vectors $w$, 
-		meaning that their variance and bias are controlled. 
-		While in StyleGAN2 a single global $w$ vector controls all the features equally, the GANformer 
-		uses attention so that the $k$ latent components specialise to control different regions in the 
-		image to create it cooperatively, and therefore perform better especially in generating images 
-		depicting multi-object scenes, allowing also for a flexible and dynamic style modulation at the 
-		region level.
-	\end{enumerate}
-
+	The generator likewise is composed of two parts, a mapping network and a synthesis network. The 
+	mapping network of a GANformer is the same as that of the styleGAN2.
+	In the synthesis network, while in the StyleGAN2, a single global $w$ vector controls all the features 
+	equally, the GANformer uses attention so that the $k$ latent components specialise to control 
+	different regions in the image to create it cooperatively, and therefore perform better especially in 
+	generating images depicting multi-object scenes, allowing also for a flexible and dynamic style 
+	modulation at the region level.
+	
 	The bipartite transformer offers a solution to the StyleGAN limitation in its ability to perform spatial 
 	decomposition which leaded to the impossibility of controlling the style of a localised regions within 
 	the generated image.
@@ -503,19 +499,19 @@
 	This structure empowers the discriminator with the capacity to likewise model long-range 
 	dependencies, which can aid it in its assessment of the image fidelity, allowing to acquire a more 
 	holistic understanding of the visual modality.
-	\textcolor{blue}{
-	\begin{itemize}
-		\item Compositional Latent Space with multiple variables that coordinate through attention to 
-		produce the image cooperatively, in a manner that matches the inherent compositionality of 
-		natural scenes.
-		\item Bipartite Structure that balances between expressiveness and efficiency, modelling 
-		long-range dependencies while maintaining linear computational costs.
-		\item Bidirectional Interaction between the latents and the visual features, which allows the 
-		refinement and interpretation of each in light of the other.
-		\item Multiplicative Integration rule to impact the features' visual style more flexibly, akin to 
-		StyleGAN but in contrast to the transformer network.
-	\end{itemize}
-}
+%	\textcolor{blue}{
+%	\begin{itemize}
+%		\item Compositional Latent Space with multiple variables that coordinate through attention to 
+%		produce the image cooperatively, in a manner that matches the inherent compositionality of 
+%		natural scenes.
+%		\item Bipartite Structure that balances between expressiveness and efficiency, modelling 
+%		long-range dependencies while maintaining linear computational costs.
+%		\item Bidirectional Interaction between the latents and the visual features, which allows the 
+%		refinement and interpretation of each in light of the other.
+%		\item Multiplicative Integration rule to impact the features' visual style more flexibly, akin to 
+%		StyleGAN but in contrast to the transformer network.
+%	\end{itemize}
+%}
 	
 	\section{Implementation}
 	%	This section should be structured as follows (from the Reproducibility challenge template):
