@@ -150,8 +150,8 @@
 	\begin{figure*}[htb]				
 		\centering
 		\includegraphics[width=.6\linewidth]{images/styleGAN}
-		\caption{\textbf{StyleGAN architecture.} Visualisation of the two components of a GAN: generator 
-			and discriminator.}
+		\caption{\textbf{StyleGAN architecture.} Re-design of the traditional GAN generator into a 
+		style-based generator.}
 		\label{fig:styleGAN}
 	\end{figure*}
 
@@ -187,8 +187,8 @@
 	\begin{figure*}[htb]				
 		\centering
 		\includegraphics[width=\linewidth]{images/styleGAN2}
-		\caption{\textbf{StyleGAN2 architecture.} Visualisation of the two components of a GAN: 
-			generator and discriminator.}
+		\caption{\textbf{StyleGAN2 architecture.} Evolution from a StyleGAN to a StyleGAN2 synthesis 
+			network.}
 		\label{fig:styleGAN2}
 	\end{figure*}
 	
@@ -680,8 +680,8 @@
 	lot faster than competing approaches, generating impressive images early in the training
 	
 	\begin{figure*}[htpb]				
-		\centering
-		\includegraphics[width=.7\linewidth]{../src/trained_network/out_imgs/FIDscore.pdf}
+		\raggedleft
+		\includegraphics[width=.85\linewidth]{../src/trained_network/out_imgs/FIDscore.pdf}
 		\caption{\textbf{Comparison between the StyleGAN2 and the GANformer models.} We evaluate 
 		the models according to FID score along 300k image samples. The score is computed every 
 		sixteen checkpoints.}
