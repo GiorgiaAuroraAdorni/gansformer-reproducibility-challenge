@@ -646,7 +646,7 @@
         \end{table}
 	
     It is noteworthy to state that in the code given by the authors, attention seems to be only optionally 
-    used in the discriminator and when analysing the pretrained models provided, it is never used,
+    used in the discriminator and when analysing the pre-trained models provided, it is never used,
 	prompting us to implement two variations of the GANsformer not openly 
     discussed in \cite{hudson2021generative}.
     We use the GANsformer paradigm for the generator and a vanilla StyleGAN2 discriminator and 
@@ -688,7 +688,6 @@
 		\label{fig:performance}
 	\end{figure*}
 	
-	
 	As mentioned before, unexpectedly, the model that yields the better results in the original paper, is overall the worst in our experiments.
 	Not only the FID score is worse than the baseline Stylegan2 at the final training step both for simplex and duplex attention implementations but also claims about efficiency can not be verified.
 	Models that include attention on the Generator only, instead, are faster in terms of steps to reach a qualitative results when compared to the baseline.
@@ -708,13 +707,29 @@
 			\caption{StyleGAN2.} 
 		\end{subfigure}
 		\begin{subfigure}{\linewidth}
-			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/random_GANFormer_Simplex_D_StyleGAN_300kimg.png}
+			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/random_GANFormer_Simplex_D_Stylegan2_300kimg.png}
 			\vspace{-7mm}
-			\caption{GANformer model with Simplex attention and discriminator without attention.}
+			\caption{GANformer with Simplex attention and vanilla StyleGAN2 discriminator.}
+		\end{subfigure}
+			\begin{subfigure}{\linewidth}
+			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/random_GANFormer_Simplex_D_Att_300kimg.png}
+			\vspace{-7mm}
+			\caption{GANformer with Simplex attention.}
+		\end{subfigure}
+		\begin{subfigure}{\linewidth}
+			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/random_GANFormer_Duplex_D_Stylegan2_300kimg.png}
+			\vspace{-7mm}
+			\caption{GANformer with Duplex attention and vanilla StyleGAN2 discriminator.}
+		\end{subfigure}
+		\begin{subfigure}{\linewidth}
+			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/random_GANFormer_Duplex_D_Att_300kimg.png}
+			\vspace{-7mm}
+			\caption{GANformer with Duplex attention.}
 		\end{subfigure}
 		\vspace{3mm}
 		\caption{\textbf{Visualisation of 9 images generated with the various models}.}\label{fig:random}
 	\end{figure}
+
 
 	\begin{figure}[htpb]
 		\centering
@@ -724,13 +739,28 @@
 			\caption{StyleGAN2.} 
 		\end{subfigure}
 		\begin{subfigure}{\linewidth}
-			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/interpolation_GANFormer_Simplex_D_StyleGAN_300kimg.png}
+			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/interpolation_GANFormer_Simplex_D_Stylegan2_300kimg.png}
 			\vspace{-7mm}
-			\caption{GANformer model with Simplex attention and discriminator without attention.}
+			\caption{GANformer with Simplex attention and vanilla StyleGAN2 discriminator.}
+		\end{subfigure}
+		\begin{subfigure}{\linewidth}
+			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/interpolation_GANFormer_Simplex_D_Att_300kimg.png}
+			\vspace{-7mm}
+			\caption{GANformer with Simplex attention.}
+		\end{subfigure}
+		\begin{subfigure}{\linewidth}
+			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/interpolation_GANFormer_Duplex_D_Stylegan2_300kimg.png}
+			\vspace{-7mm}
+			\caption{GANformer with Duplex attention and vanilla StyleGAN2 discriminator.}
+		\end{subfigure}
+		\begin{subfigure}{\linewidth}
+			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/interpolation_GANFormer_Duplex_D_Att_300kimg.png}
+			\vspace{-7mm}
+			\caption{GANformer with Duplex attention.}
 		\end{subfigure}
 		\vspace{3mm}
-		\caption{\textbf{Simple $\mathbf{z}$ interpolation using of the various 
-		models}.}\label{fig:interpolation}
+		\caption{\textbf{Simple $\mathbf{z}$ interpolation using of the various models}.} 
+		\label{fig:interpolation}
 	\end{figure}
     
     
