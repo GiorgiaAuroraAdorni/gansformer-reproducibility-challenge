@@ -63,10 +63,10 @@ data_ganf_dupl_n_att = pd.read_csv('scores/FIDScore_GanformerDuplexNoAtt_300kimg
 data_ganf_dupl_att = pd.read_csv('scores/FIDScore_GanformerDuplexAtt_300kimg.csv', delimiter=" ")
 
 labels = ["StyleGAN2",
-          "GANformer with Simplex attention \n(no discriminator attention)",
-          "GANformer with Simplex attention \n(and discriminator attention)",
-          "GANformer with Duplex attention \n(no discriminator attention)",
-          "GANformer with Duplex attention \n(and discriminator attention)"]
+          "GANformer, Simplex attention \n(Stylegan2 discriminator)",
+          "GANformer, Simplex attention",
+          "GANformer, Duplex attention \n(Stylegan2 discriminator)",
+          "GANformer, Duplex attention"]
 
 title = "Learning Performance"
 # Cross validation with 100 iterations to get smoother mean test and train
