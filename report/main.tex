@@ -49,24 +49,21 @@
 	
 	\maketitle
 	\begin{abstract}
-		The field of image origination through generative modelling is abundantly discussed nowadays, as 
-		it can be used for an extremely varied range of applications such as up-scaling already existing 
-		images, creating non-existing objects, such as interior design scenes, products or even human 
-		faces, but also to achieve transfer-learning processes.
-		In this context, Generative Adversarial Networks (GANs) are a class of widely studied machine 
-		learning frameworks which first appeared in the paper ``\emph{Generative adversarial nets}'' by 
-		\citet{goodfellow2014generative}, that aims at achieving the aforementioned goal.
-		In our work, we reproduce and evaluate a novel variation of the original GAN network, the 
-		GANformer, proposed in ``\emph{Generative Adversarial Transformers}'' by 
-		\citet{hudson2021generative}.
-		The goal of this project was to recreate the methods presented by this paper with the objective of reproducing the original results and commenting on the Authors' claims.
-		Due to resources and time limitations, we had to put a constraint not only on the networks 
-		training times but also on datasets types and sizes.
-		In our research, we have successfully mimicked both variations of the proposed GANformer 
-		models and found extreme differences between the authors' and our results.
-		Moreover, discrepancies between the publication methodology and the one implemented, made 
-		available in the code, allowed us to study two undisclosed variations of the presented 
-		procedures.
+		The field of image generation through generative modelling is abundantly discussed at 
+        the moment. It can be used for a highly varied range of applications such as up-scaling 
+        already existing images, creating non-existing objects such as interior design scenes, 
+        products or even human faces, and achieving transfer-learning processes. In this context, 
+        GANs (Generative Adversarial Networks) are a class of widely studied machine learning 
+        frameworks first appearing in the paper ``\emph{Generative adversarial nets}'' by 
+        \citet{goodfellow2014generative} that achieve the aforementioned goal. In our work, 
+        we will reproduce and evaluate a novel variation of the original GAN network, the GANformer, 
+        proposed in ``\emph{Generative Adversarial Transformers}'' by \citet{hudson2021generative}. 
+        The goal of this project was to recreate the methods presented by this paper to reproduce the 
+        original results and comment on the authors’ claims. Due to resources and time limitations, 
+        we had to constraint the networks training times and dataset sizes. Our research successfully 
+        recreated both variations of the proposed GANFormer model and found extreme differences between 
+        the authors’ and our results. Moreover, discrepancies between the publication methodology and 
+        the one available in the provided code allowed us to study two undisclosed variations of the presented procedures.
 	\end{abstract}
 
 	%	\section*{General notes}
@@ -89,36 +86,33 @@
 	Actually we are not participating formally to the \textit{Fall Edition of the ML Reproducibility 
 	Challenge 2021}.
 	
-	With this work, we attempt to verify the empirical results and claims of the paper ``\emph{Generative 
-	adversarial transformers}'' by \citet{hudson2021generative}, by reproducing three of the 
-	computational experiments performed by the authors:
-	\begin{enumerate*}
-		\item[(1)] the \textit{StyleGAN2} by \citet{karras2020analyzing,karras2019style}, a GAN 
-		network which uses one 
-		global latent style vector to modulate the features of each layer, hence to control the style of all 
-		image features globally,
-		\item[(2)] the \textit{GANformer} with \textit{Simplex Attention} by 
-		\citet{hudson2021generative}, a generalisation of the StyleGAN design with \textit{k} latent 
-		vectors that cooperate through attention, allowing for a spatially finer control over the generation 
-		process since multiple style vectors impact different regions in the image concurrently, in 
-		particular permitting communication in one direction, in the generative context – from the latents 
-		to the image features, and
-		\item[(3)] the \textit{GANformer} with \textit{Duplex Attention} by \citet{hudson2021generative}, 
-		which is based on the same principles as the previous but propagating information both from 
-		global latents to local image features, enabling both top-down and bottom-up reasoning to occur 
-		simultaneously.
+	With this work, we are going to verify the empirical results and claims of the paper 
+    ``\emph{Generative Adversarial transformers}'' by \citet{hudson2021generative}, by reproducing 
+    three of the computational experiments performed by the authors:
+    \begin{enumerate*}
+        \item[(1)] the \textbf{StyleGAN2} by \citet{karras2020analyzing,karras2019style}, a GAN 
+        network that uses one global latent style vector to modulate the features of each layer, hence 
+        controlling the style of all image features globally.
+        \item[(2)] the \textbf{GANformer} with \textbf{Simplex Attention} by 
+        \citet{hudson2021generative}, which generalises the StyleGAN design with \textit{k} latent 
+        vectors that cooperate through attention. Thus, allowing for a spatially finer control over the generation 
+        process since multiple style vectors impact different regions in the image concurrently, particularly 
+        permitting communication in one direction, in the generative context – from the latent vectors to the 
+        image features.
+        \item[(3)] the \textbf{GANformer} with \textbf{Duplex Attention} by \citet{hudson2021generative}, 
+        which is based on the same principles as the previous but propagating information from 
+        global latent vectors to local image features, enabling both top-down and bottom-up reasoning to coincide.
 	\end{enumerate*} 
 
 	%TODO
 	\textcolor{red}{Add the fact that we extend the two GANformer experiments, with the possibility to 
 	keep the attention optional on the discriminator}
 	
-	The first model is used as baseline, while the remaining are the architectures introduced by the 
-	authors. Thy consider the GANformer as a new efficient architecture which combines GANs and 
-	transformers, able to demonstrate its strength and robustness over a range of task of visual 
-	generative modelling —  simulated multi-object environments (real-world indoor and out-door 
-	scenes) — achieving state-of-the-art results in terms of both image quality and diversity, while 
-	benefiting from fast learning and better data-efficiency. 
+	The first model is used as a baseline, while the remaining are the architectures introduced by the authors. 
+    They consider the GANformer as “a novel and efficient type of transformer” which demonstrates its strength 
+    and robustness over a range of tasks of visual generative modelling — simulated multi-object environments 
+    (real-world indoor and outdoor scenes) — achieving state-of-the-art results in terms of both image quality 
+    and diversity while benefiting from fast learning and better data-efficiency.
 	
 	\section{Background}	
 	
@@ -629,17 +623,50 @@
 	%	Try to summarize the achievements of your project and its limits, suggesting (when appropriate) 
 	%	possible extensions and future works.
 
-	In this project we have discussed the replication of ``\emph{Generative adversarial Transformers}'' 
-	by \citet{hudson2021generative}.
-	Contrary to our initial expectations, in our opinion, some of the claims made by the authors were misleading or unproven in a scientific manner.
-	Once we made this realisation, our methodology shifted from a pure reproduction of the results to a 
-	search of undisclosed variations of the novel GANformer system in the published material to try to 
-	obtain results that were comparable to the given ones.
-	As mentioned in paragraph 4.4, our limited resources forced us to reduce the experiments space when compared to the authors experiments.
-	We had to shift from four Datasets to a single, size-reduced one: \citet{cartoonset}, significantly reducing not only the time of execution but also the complexity of our research.
-	For the same reasons, we have discarded four out of the five baselines: GAN, k-GAN, SAGAN and VQGAN were removed in favour of just StyleGAN2.
-	The choice of StyleGAN2 was prompted by a similarity of its execution to the novel methodologies, where parts of the author's code is a carbon copy of the StyleGAN2 implementation first proposed in \citet{karras2019style}.
-	
+	In this project we have discussed the replication of ``\emph{Generative adversarial Transformers}'' by 
+    \citet{hudson2021generative}.
+    Contrary to our initial expectations, in our opinion, some of the claims made by the authors were 
+    misleading or unproven in a scientific manner.
+    Once we made this realization, our methodology shifted from a pure reproduction of the results to a 
+    search of undisclosed variations of the novel GANformer system in the published material trying to obtain 
+    results that were comparable to the given ones.
+    As mentioned in paragraph 4.4, our limited resources forced us to reduce the depth of our experiments 
+    compared to the authors'.
+    We had to shift from four datasets to a single, size-reduced one: \citet{cartoonset}, significantly 
+    decreasing the time of execution and the complexity of our research.
+    For the same reasons, we have discarded four out of the five baselines: GAN, k-GAN, SAGAN and VQGAN 
+    in favour of just StyleGAN2.
+    The choice of StyleGAN2 as the baseline was prompted by a similarity of its execution to the novel 
+    GANformer, where parts of the author's code are a carbon copy of the StyleGAN2 implementation first 
+    proposed in \citet{karras2019style}.
+    \\
+    In this study, we have firstly implemented a Google Colab Pro compatible version of the authors code, 
+    enabling us to train and test StyleGAN2 and the two flavours of GANformer (Duplex and Simplex attention) 
+    in less than 54 hours in total.
+    As presented in section 5, we were not able to achieve the improvements declared by the authors but instead 
+    found a decrease both in time performance and quality.
+    Believing it was an error arised by our adaptation we have analyzed the pre-trained models provided and 
+    noticed an alarming discrepancy between the code and the methodology discussed in the paper.
+    In ``\emph{Generative adversarial Transformers}'' by \citet{hudson2021generative}, the attention component 
+    is said to be placed both on the generator and the discriminator sub-networks, while in all the pre-trained 
+    models provided, it seems to never be used on the discriminator.
+    %Proofreading the code, a BUG has been discoverd by us, the optional attention flag, even if set to True 
+    % when selecting a network structure, is never read during model preparations, resulting in models that never 
+    % make use of attention in the discriminator phase.
+    %Moreover, to us it seemed that a discrepancy could be found in the Hyperparameters settings.
+    \\
+    Believing that all of the authors experiments were performed on a different network than the one presented 
+    in the publication, we have tried to recreate the structure that could have yielded the claimed qualitative results.
+    To perform such a task we have decomposed the GANformer network in two sections by keeping the presented 
+    Generator but substituting the hypothetically valid discriminator network with a vanilla StyleGAN discriminator.
+    To our surprize the StyleGAN/GANformer hybrid did perform significantly better than the baseline, proving, 
+    in our opinion the suspected behaviour of the original code.
+    % explaination missing
+    \\
+    In conclusion we have succesfully reproduced the ``\emph{Generative adversarial Transformers}'' by \citet{hudson2021generative} 
+    and found unexpected results.
+    We have then modified the proposed methodologies to obtain an image generation network that takes inspiration from the 
+    novel GANformer and adapts it to produce images that score significantly higher than the baseline over four quality metrics.
 	\section{Authors contribution}
 
 	\clearpage
