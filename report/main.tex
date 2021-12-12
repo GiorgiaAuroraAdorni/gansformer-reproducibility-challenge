@@ -616,7 +616,10 @@
     
     
 	It is blatantly obvious that the Duplex GANformer implementation is not capable of performing the task at hand, while all other models are at least able to produce visually compelling results.
-	
+	ADD MORE COMPREHENSIVE COMMENT
+
+	%TODO where should we put the author contributions?
+	\section{Author contribution}
 	
 	\clearpage
 	
@@ -626,9 +629,19 @@
 	%	
 	%	Try to summarize the achievements of your project and its limits, suggesting (when appropriate) 
 	%	possible extensions and future works.
+
+	In this project we have discussed the replication of ``\emph{Generative adversarial Transformers}'' by 
+	\citet{hudson2021generative}.
+	Contrary to our initial expectations, in our opinion, some of the claims made by the authors were misleading or unproven in a scientific manner.
+	Once we made this realization, our methodology shifted from a pure reproduction of the results to a search of undisclosed variations of the novel GANformer system in the published material to try to obtain results that were comparable to the given ones.
+	As mentioned in paragraph 4.4, our limited resources forced us to reduce the experiments space when compared to the authors experiments.
+	We had to shift from four Datasets to a single, size-reduced one: \citet{cartoonset}, significantly reducing not only the time of execution but also the complexity of our research.
+	For the same reasons, we have discarded four out of the five baselines: GAN, k-GAN, SAGAN and VQGAN were removed in favour of just StyleGAN2.
+	The choice of StyleGAN2 was prompted by a similarity of its execution to the novel methodologies, where parts of the author's code is a carbon copy of the StyleGAN2 implementation first proposed in \citet{karras2019style}.
 	
-	%TODO where should we put the author contributions?
-	\section{Author contribution}
+
+	
+	
 	
 	\clearpage
 	\appendix
