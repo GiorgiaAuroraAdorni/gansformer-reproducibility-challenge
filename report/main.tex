@@ -126,7 +126,7 @@
 	Generative Adversarial Networks (GANs) \cite{goodfellow2014generative}, are deep-learning-based 
 	generative models which learn to determine whether a sample is from the model or the data 
 	distribution. 
-	The classic architecture, shown in Appendix \ref{subsec:app_background} in Figure 
+	The classic architecture, illustrated in Appendix \ref{subsec:app_background} in Figure 
 	\ref{fig:gan}, is 
 	composed by two main neural networks: 
 	the \textit{generator} ${G(z)}$, which generates new plausible examples in the problem domain — 
@@ -137,25 +137,22 @@
 	\subsection{StyleGAN2}\label{sec:stylegan}
 	StyleGAN are a re-design of the GANs generator architecture, which aim is to control the image 
 	synthesis process \cite{karras2019style}. The typical architecture of a StyleGAN is shown in 
-	Appendix \ref{subsec:app_background} in Figure \ref{fig:styleGAN}.
-	%TODO mention that details are provided in appendix 
+	Appendix \ref{subsec:app_background} in Figure \ref{fig:styleGAN}, together with the technical 
+	details. 
 	
 	In particular, we are interested in the second version of the StyleGAN, the StyleGAN2 
 	\cite{karras2020analyzing}, which are a revisiting of the architecture of the StyleGAN synthesis 
-	network. Figure \ref{fig:styleGAN2} in Appendix \ref{subsec:app_background} shows the 
-	various 
-	changes made to the original architecture up to the final StyleGAN2 network.
-	%TODO mention that details are provided in appendix 
+	network. Figure \ref{fig:styleGAN2} in Appendix \ref{subsec:app_background} exemplifies the 
+	various changes made to the original architecture up to the final StyleGAN2 network. Further 
+	informations are provided in Appendix \ref{subsec:app_background}.
 	 
 	The StyleGAN2 architecture makes it possible to control the image synthesis via scale-specific 
 	modifications to the styles. In particular, this approach attains layer-wise decomposition of visual 
 	properties, allowing StyleGAN to control global aspects of the picture such as pose, lighting 
 	conditions or colour schemes, in a coherent manner over the entire image.
 	
-	However, while this model successfully disentangles global properties, it is more limited in its 
-	ability 
-	to perform spatial decomposition, as it provides no direct means to control the style of a 
-	localized 
+	However, while this model successfully disentangles global properties, it is more limited in its ability 
+	to perform spatial decomposition, as it provides no direct means to control the style of a localised 
 	regions within the generated image.
 
 	\subsection{Transformers}\label{sec:transformer}
@@ -287,7 +284,7 @@
 	\end{equation}
 	where $\gamma(\cdot), \beta(\cdot)$ are mappings that compute multiplicative and additive styles 
 	(gain and bias), maintaining dimensionality $d$, and $\omega (X) = X- \mu(X)$ normalises each 
-	element with $\sigma(X)$ respect to the other features. By normalizing $X$ (image features), and 
+	element with $\sigma(X)$ respect to the other features. By normalising $X$ (image features), and 
 	then letting $Y$ (latents) control the statistical tendencies of $X$, the information propagation from 
 	$Y$ to $X$ is enabled, allowing the latents to control the visual generation of spatial attended 
 	regions within the image, so as to guide the synthesis of objects or entities.
@@ -369,10 +366,10 @@
 	$\mathcal{O}(n^2)$  complexity of self-attention, which impedes its applicability to high-resolution 
 	images.
 	
-	As to the loss function, optimization and training configurations, we adopt the settings and 
+	As to the loss function, optimisation and training configurations, we adopt the settings and 
 	techniques used in Style-GAN2 \cite{karras2020analyzing}, including in particular style mixing, 
 	stochastic variation, exponential moving average for weights, and a non-saturating logistic loss with 
-	a lazy R1 regularization.
+	a lazy R1 regularisation.
 	
 	\subsection{Experimental setup}	
 	The source code of our work is available at the following GitHub repository: 
@@ -395,7 +392,7 @@
 	this section.}
 	
 	In the original paper \cite{hudson2021generative}, they evaluate all models under comparable 
-	conditions of training scheme, model size, and optimization details, implementing all the models 
+	conditions of training scheme, model size, and optimisation details, implementing all the models 
 	within the codebase introduced by the Style-GAN authors \cite{karras2020analyzing}. 
 	All models have been trained with images of 256 × 256 resolution and for the 
 	same number of training steps, roughly spanning a week on 2 NVIDIA V100 GPUs per model (or 
@@ -524,9 +521,9 @@
 	        StyleGAN2                    &  24.77 & 2.50 & 0.00 & 0.02 & 0 \%\\ 
 			GANformer, Simplex attention & 28.11 & 2.58 & 0.00 & 0.01 & -13.47 \%\\ 
 			GANformer, Duplex attention  & 374.18 & 1.40 & 0.00 & 0.00 & -1410.47  \%\\ 
-	        GANformer, Sim. attention/Stylegan2 disc. & 19.09 &  2.62  &  0.00    & 0.05  & 
+	        GANformer, Simplex attention (StyleGAN2 disc.) & 19.09 &  2.62  &  0.00    & 0.05  & 
 	        +22.93 \% \\ 
-	        GANformer, Dup. attention/Stylegan2 disc.  &  24.81  & 2.62 &   0.00   & 0.02 & 
+	        GANformer, Duplex attention (StyleGAN2 disc.)  &  24.81  & 2.62 &   0.00   & 0.02 & 
 	        -0.14 \%\\ 
 	        \bottomrule
         \end{tabular}
@@ -551,8 +548,8 @@
 	Moreover a comment has to be made on the claim of efficiency; both with and without attention on the discriminator, a training step is considerably slower to be completed on the same resources when compared to Stylegan2.
 	While the latter is capable of having a training speed of 10.9 images generated a second, all flavours of the GANformer, in the best case, only yield 8.3 images generated a second.
 	
-	Finally, to visualize our findings in a less empirical fashion, we have used random 
-	seeds to create latent inputs and visualized the resulting images generated by the baseline 
+	Finally, to visualise our findings in a less empirical fashion, we have used random 
+	seeds to create latent inputs and shown the resulting images generated by the baseline 
 	Stylegan2 and all four presented variations of the GANformer in Figures \ref{fig:random} and 
 	\ref{fig:interpolation}.
 	\begin{figure}[htpb]
@@ -635,13 +632,15 @@
 	In this project we have discussed the replication of ``\emph{Generative adversarial Transformers}'' 
 	by \citet{hudson2021generative}.
 	Contrary to our initial expectations, in our opinion, some of the claims made by the authors were misleading or unproven in a scientific manner.
-	Once we made this realization, our methodology shifted from a pure reproduction of the results to a search of undisclosed variations of the novel GANformer system in the published material to try to obtain results that were comparable to the given ones.
+	Once we made this realisation, our methodology shifted from a pure reproduction of the results to a 
+	search of undisclosed variations of the novel GANformer system in the published material to try to 
+	obtain results that were comparable to the given ones.
 	As mentioned in paragraph 4.4, our limited resources forced us to reduce the experiments space when compared to the authors experiments.
 	We had to shift from four Datasets to a single, size-reduced one: \citet{cartoonset}, significantly reducing not only the time of execution but also the complexity of our research.
 	For the same reasons, we have discarded four out of the five baselines: GAN, k-GAN, SAGAN and VQGAN were removed in favour of just StyleGAN2.
 	The choice of StyleGAN2 was prompted by a similarity of its execution to the novel methodologies, where parts of the author's code is a carbon copy of the StyleGAN2 implementation first proposed in \citet{karras2019style}.
 	
-	\section{Author contribution}
+	\section{Authors contribution}
 
 	\clearpage
 	\appendix
@@ -684,7 +683,7 @@
 	In this paper, we exploited StyleGAN2 architecture, the second version of the StyleGAN model, 
 	introduced in Section \ref{sec:stylegan}, which is a re-design of the GANs generator architecture.
 	The aim of the StyleGAN is to control the image synthesis process \cite{karras2019style}. The 
-	architecture is shown in Figure \ref{fig:styleGAN}.
+	architecture is illustrated in Figure \ref{fig:styleGAN}.
 	\begin{figure*}[!h]				
 		\centering
 		\includegraphics[width=.5\linewidth]{images/styleGAN}
@@ -741,22 +740,16 @@
 	to obtain more predictable results.
 	Furthermore, after this change, the mean is no longer necessary, but it is sufficient for the 
 	normalisation and modulation to operate on the standard deviation alone.
-	Moreover, the application of bias, noise, and normalization to the constant input has been safely 
+	Moreover, the application of bias, noise, and normalisation to the constant input has been safely 
 	removed. 
 	
-	When the style block consists in a modulation, a convolution, and a normalisation operation, it 
-	is 
-	possible to restructure the AdaIN has a demodulation operation, which is applied to the 
-	weights 
+	When the style block consists in a modulation, a convolution, and a normalisation operation, it is 
+	possible to restructure the AdaIN has a demodulation operation, which is applied to the weights 
 	associated with each convolution layer. 
-	AdaIN uses different scale and shift parameters to align different areas of $w$ — the 
-	activations 
-	of intermediate activations — with different regions of the feature map (either within each 
-	feature 
-	map or via grouping features channel-wise by spatial location), while weight demodulation 
-	takes the 
-	scale and shift parameters out of a sequential computation path, instead baking scaling into 
-	the 
+	AdaIN uses different scale and shift parameters to align different areas of $w$ — the activations 
+	of intermediate activations — with different regions of the feature map (either within each feature 
+	map or via grouping features channel-wise by spatial location), while weight demodulation takes the 
+	scale and shift parameters out of a sequential computation path, instead baking scaling into the 
 	parameters of convolutional layers.
 
 	%	The \textit{mapping network}, which consists in a series of feed-forward layers, whose 
@@ -770,8 +763,7 @@
 	%$w$, 
 	%	meaning that their variance and bias are controlled. 
 	
-	Also transformers are an important deep-learning model exploited in this work and introduced 
-	in 
+	Also transformers are an important deep-learning model exploited in this work and introduced in 
 	Section \ref{sec:transformer}. 	
 	An \textit{attention function} \cite{vaswani2017attention}, can be described as mapping a query and 
 	a set of key-value pairs to an output, where the query, keys, values, and output are all vectors. The 
@@ -909,7 +901,7 @@
 	The dataset used in this work is the Google Cartoon Set \cite{cartoonset} introduced in Section 
 	\ref{sec:dataset}, containing 10k 2D cartoon avatar. These images are composed of 16 components 
 	that vary in 10 artwork attributes, 4 colour attributes, and 4 proportion attributes (see Table 
-	\ref{tab:dataset}. 
+	\ref{tab:dataset}). 
 		
 		\begin{table}[htb]
 			\centering
