@@ -49,24 +49,24 @@
 	
 	\maketitle
 	\begin{abstract}
-		%Train a GAN with Transformer-like architecture
-		%Concise and self-contained description of your project, motivation and main findings.
-		The field of image origination through generative modeling is abundantly discussed at
-		the moment, as it can be used for an extremely varied range of applications such as 
-		up-scaling already existing images, creating non-existing objects such as interior 
-		design scenes, products or even human faces but also to achieve transfer-learning 
-		processes.
-		In this context, GANs (Generative Adversarial Networks) are a class of widely studied 
-		machine learning frameworks first appeared in the paper 
-		``\emph{Generative adversarial Nets}'' by \citet{goodfellow2014generative} that achieve
-		the aforementioned goal.
-		In our work we will reproduce and evaluate a novel variation of the original GAN 
-		network, the GANformer, proposed in  ``\emph{Generative adversarial Transformers}'' by 
+		The field of image origination through generative modelling is abundantly discussed nowadays, as 
+		it can be used for an extremely varied range of applications such as up-scaling already existing 
+		images, creating non-existing objects, such as interior design scenes, products or even human 
+		faces, but also to achieve transfer-learning processes.
+		In this context, Generative Adversarial Networks (GANs) are a class of widely studied machine 
+		learning frameworks which first appeared in the paper ``\emph{Generative adversarial nets}'' by 
+		\citet{goodfellow2014generative}, that aims at achieving the aforementioned goal.
+		In our work, we reproduce and evaluate a novel variation of the original GAN network, the 
+		GANformer, proposed in ``\emph{Generative Adversarial Transformers}'' by 
 		\citet{hudson2021generative}.
 		The goal of this project was to recreate the methods presented by this paper with the objective of reproducing the original results and commenting on the Authors' claims.
-		Due to resources and time limitations we had to put a constraint not only on the networks training times but also on datasets sizes.
-		In our research we have successfully recreated both variations of the proposed GANFormer model and found extreme differences between the authors' and our results.
-		Moreover discrepancies between the publication methodology and the one available in the provided code allowed us to study 2 undisclosed variations of the presented procedures.
+		Due to resources and time limitations, we had to put a constraint not only on the networks 
+		training times but also on datasets types and sizes.
+		In our research, we have successfully mimicked both variations of the proposed GANformer 
+		models and found extreme differences between the authors' and our results.
+		Moreover, discrepancies between the publication methodology and the one implemented, made 
+		available in the code, allowed us to study two undisclosed variations of the presented 
+		procedures.
 	\end{abstract}
 
 	%	\section*{General notes}
@@ -89,36 +89,38 @@
 	Actually we are not participating formally to the \textit{Fall Edition of the ML Reproducibility 
 	Challenge 2021}.
 	
-	With this work, we are going to verify the empirical results and claims of the paper 
-	``\emph{Generative adversarial transformers}'' by \citet{hudson2021generative}, by reproducing 
-	three of the computational experiments performed by the authors:
+	With this work, we attempt to verify the empirical results and claims of the paper ``\emph{Generative 
+	adversarial transformers}'' by \citet{hudson2021generative}, by reproducing three of the 
+	computational experiments performed by the authors:
 	\begin{enumerate*}
-		\item[(1)] the \textbf{StyleGAN2} by \citet{karras2020analyzing,karras2019style}, a GAN 
+		\item[(1)] the \textit{StyleGAN2} by \citet{karras2020analyzing,karras2019style}, a GAN 
 		network which uses one 
 		global latent style vector to modulate the features of each layer, hence to control the style of all 
 		image features globally,
-		\item[(2)] the \textbf{GANformer} with \textbf{Simplex Attention} by 
+		\item[(2)] the \textit{GANformer} with \textit{Simplex Attention} by 
 		\citet{hudson2021generative}, a generalisation of the StyleGAN design with \textit{k} latent 
 		vectors that cooperate through attention, allowing for a spatially finer control over the generation 
 		process since multiple style vectors impact different regions in the image concurrently, in 
 		particular permitting communication in one direction, in the generative context – from the latents 
 		to the image features, and
-		\item[(3)] the \textbf{GANformer} with \textbf{Duplex Attention} by \citet{hudson2021generative}, 
+		\item[(3)] the \textit{GANformer} with \textit{Duplex Attention} by \citet{hudson2021generative}, 
 		which is based on the same principles as the previous but propagating information both from 
 		global latents to local image features, enabling both top-down and bottom-up reasoning to occur 
 		simultaneously.
 	\end{enumerate*} 
+
+	%TODO
+	\textcolor{red}{Add the fact that we extend the two GANformer experiments, with the possibility to 
+	keep the attention optional on the discriminator}
 	
 	The first model is used as baseline, while the remaining are the architectures introduced by the 
-	authors. Thy consider the GANformer has ``a novel and efficient type of transformer'' which 
-	demonstrates its strength and robustness over a range of task of visual generative modelling —  
-	simulated multi-object environments (real-world indoor and out-door scenes) — achieving 
-	state-of-the-art results in terms of both image quality and diversity, while benefiting from fast 
-	learning and better data-efficiency. 
+	authors. Thy consider the GANformer as a new efficient architecture which combines GANs and 
+	transformers, able to demonstrate its strength and robustness over a range of task of visual 
+	generative modelling —  simulated multi-object environments (real-world indoor and out-door 
+	scenes) — achieving state-of-the-art results in terms of both image quality and diversity, while 
+	benefiting from fast learning and better data-efficiency. 
 	
-	% TODO ummary of the main results and contributions
-
-	\section{Related works/Background}	
+	\section{Background}	
 	
 	\subsection{Generative Adversarial Networks (GANs)}\label{sec:gan}
 	Generative Adversarial Networks (GANs) \cite{goodfellow2014generative}, are deep-learning-based 
@@ -315,15 +317,14 @@
 	top-down interactions.
 	
 	\section{Implementation}
-	%	This section should be structured as follows (from the Reproducibility challenge template):
-	%	
-	%	---
-	%	
-	%	Briefly describe what you did and which resources did you use. E.g. Did you use author's code, 
-	%	did you re-implement parts of the pipeline, how much time did it take to produce the results, 
-	%	what hardware you were using and how long it took to train/evaluate. 
-	
+
 	The code has been implemented using the code and the information provided by the authors.
+	
+	%TODO
+	
+	\textcolor{red}{Briefly describe what you did and which resources did you use. E.g. Did you use 
+	author's code, did you re-implement parts of the pipeline, how much time did it take to produce the 
+	results, what hardware you were using and how long it took to train/evaluate. }
 	
 	\subsection{Datasets}	\label{sec:dataset}
 	The original paper \cite{hudson2021generative} explored the GANformer model on four datasets for 
@@ -332,8 +333,8 @@
 	
 	Initially, we tried to use the Cityscapes dataset, since it is the smaller among the four: it contains 
 	24998 images with 256x256 resolution. 
-	However, the time to complete the training was to high on this dataset (TODO: how much?), even if 
-	using computational resources like GPU.
+	However, the time to complete the training was to high on this dataset (\textcolor{red}{TODO: how 
+	much?}), even if using computational resources like GPU.
 	
 	For this reason, we switch to another dataset, the Google Cartoon Set \cite{cartoonset}\footnote{	
 	\url{https://google.github.io/cartoonset}}, containing 10k 2D cartoon avatar 
@@ -342,13 +343,14 @@
 	\ref{subsec:app_dataset}). 
 
 	\subsection{Hyper-parameters}\label{sec:hyperparam}%TODO fixme
-	%	Describe how you set the hyperparameters and what was the source for their value (e.g. paper, 
-	%	code or your guess). 
+
+	%TODO 
+	\textcolor{red}{We cannot start the section in this way. All the part about the parameters they use is 
+	missing. Review completely this section.}
+	\textcolor{blue}{Note that in the code provided by the author \cite{hudson2021generative}, the 
+	hyper-parameters are not the same mentioned in the article. }
 	
-	Note that in the code provided by the author \cite{hudson2021generative}, the hyper-parameters are 
-	not the same mentioned in the article. 
-	
-	%TODO Vision specific adaptations
+	%TODO 
 	A \textit{kernel size} of $k = 3$ is used after each application of the attention, together with a 
 	\textit{Leaky ReLU non-linearity} after each convolution and then upsample or downsample the 
 	features $X$, as part of the generator or discriminator respectively, as in e.g. StyleGAN2 
@@ -380,16 +382,18 @@
 	 by \citet{hudson2021generative} have been implemented in Python using TensorFlow 
 	 \cite{tensorflow2015-whitepaper}, so, according to that, we used the same setup.
 	 We created a Jupyter Notebook which runs all the experiments in Google Colaboratory, which 
-	 allows us to write and execute Python in the browser. %TODO add google colab url
-	
+	 allows us to write and execute Python in the browser. 
+	 
 	 All the models have been trained on a Tesla P100-PCIE-16GB (GPU) provided by Google 
 	 Colab Pro.
 	
-	\subsection{Computational requirements}%TODO fixme
-	%	Provide information on computational requirements for each of your experiments. For example, 
-	%   the  number of CPU/GPU hours and memory requirements. You'll need to think about this ahead 
-	%	of time, and write your code in a way that captures this information so you can later add it to 
-	%	this section. 
+	\subsection{Computational requirements}
+	%TODO 
+	\textcolor{red}{Provide information on computational requirements for each of your experiments. For 
+	example, the  number of CPU/GPU hours and memory requirements. You'll need to think about this 
+	ahead of time, and write your code in a way that captures this information so you can later add it to 
+	this section.}
+	
 	In the original paper \cite{hudson2021generative}, they evaluate all models under comparable 
 	conditions of training scheme, model size, and optimization details, implementing all the models 
 	within the codebase introduced by the Style-GAN authors \cite{karras2020analyzing}. 
@@ -452,9 +456,9 @@
 	scores.
 	\begin{table}[htb]
     	\centering
-		\caption{\textbf{Comparison between the GANformer (simplex and duplex) and competing 
-		Stylegan2}.  In the last column, is reported the percentage of improvement all the models, in terms 
-			of FID score, with respect to the baseline StylGAN2 architecture.}
+		\caption{\textbf{Comparison between the GANformer (Simplex and Duplex) and competing 
+		Stylegan2}. In the last column, is reported the percentage of improvement all the models, in terms 
+		of FID score, with respect to the baseline StylGAN2 architecture.}
 		\label{tab:our-results}
 		\vspace{3mm}
 		\small
@@ -470,15 +474,16 @@
 		\end{tabular}
 	\end{table}
 	
-	Unexpectedly, the novel GANformer with Duplex attention, is considerably worse than the baseline on all aspects with a staggering -1410.47 percent deterioration in FID score.
+	Unexpectedly, the novel GANformer with Duplex attention, is considerably worse than the baseline 
+	on all aspects with a staggering -1410.47 \% deterioration in FID score.
 	To investigate this further, a similar representation is recreated in Table \ref{tab:orig-results} using 
 	the original paper findings for the same metrics and with a mean of the scores spanning the four 
 	used datasets.
 	\begin{table}[htb]
     	\centering
-        \caption{\textbf{Original paper's reported results (mean of results over the 4 Datasets used by the 
+        \caption{\textbf{Original paper's reported results (mean of results over the 4 datasets used by the 
         authors)}. In the last column, is reported the percentage of improvement all the models, in terms 
-        of FID score, with respect to the baseline StylGAN2 architecture.}
+        of FID score, with respect to the baseline StyleGAN2 architecture.}
         \label{tab:orig-results}
         \vspace{3mm}
         \small
@@ -617,11 +622,8 @@
     
 	It is blatantly obvious that the Duplex GANformer implementation is not capable of performing the task at hand, while all other models are at least able to produce visually compelling results.
 	ADD MORE COMPREHENSIVE COMMENT
-
-	%TODO where should we put the author contributions?
-	\section{Author contribution}
-	
 	\clearpage
+	
 	
 	\section{Discussion and conclusion}%TODO
 	%	Here you can express your judgments and draw your conclusions based on the  evidences 
@@ -630,8 +632,8 @@
 	%	Try to summarize the achievements of your project and its limits, suggesting (when appropriate) 
 	%	possible extensions and future works.
 
-	In this project we have discussed the replication of ``\emph{Generative adversarial Transformers}'' by 
-	\citet{hudson2021generative}.
+	In this project we have discussed the replication of ``\emph{Generative adversarial Transformers}'' 
+	by \citet{hudson2021generative}.
 	Contrary to our initial expectations, in our opinion, some of the claims made by the authors were misleading or unproven in a scientific manner.
 	Once we made this realization, our methodology shifted from a pure reproduction of the results to a search of undisclosed variations of the novel GANformer system in the published material to try to obtain results that were comparable to the given ones.
 	As mentioned in paragraph 4.4, our limited resources forced us to reduce the experiments space when compared to the authors experiments.
@@ -639,10 +641,8 @@
 	For the same reasons, we have discarded four out of the five baselines: GAN, k-GAN, SAGAN and VQGAN were removed in favour of just StyleGAN2.
 	The choice of StyleGAN2 was prompted by a similarity of its execution to the novel methodologies, where parts of the author's code is a carbon copy of the StyleGAN2 implementation first proposed in \citet{karras2019style}.
 	
+	\section{Author contribution}
 
-	
-	
-	
 	\clearpage
 	\appendix
 	\section{Appendix}\label{sec:appendix}
