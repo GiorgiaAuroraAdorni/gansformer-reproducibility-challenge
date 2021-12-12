@@ -30,19 +30,20 @@
 \usepackage{stmaryrd}
 \usepackage{siunitx}
 \def\tabularxcolumn#1{m{#1}}
-
+\usepackage{graphicx}
+\graphicspath{ {images/} }
 
 \title{ATML Report}
 
 \author{%
-		Giorgia Adorni \\
-		\texttt{giorgia.adorni@usi.ch} \\
-		\And
-		Felix Boelter\\
-		\texttt{felix.boelter@usi.ch}\\
-		\And
-		Stefano Carlo Lambertenghi\\
-		\texttt{stefano.carlo.lambertenghi@usi.ch}\\
+	Giorgia Adorni \\
+	\texttt{giorgia.adorni@usi.ch} \\
+	\And
+	Felix Boelter\\
+	\texttt{felix.boelter@usi.ch}\\
+	\And
+	Stefano Carlo Lambertenghi\\
+	\texttt{stefano.carlo.lambertenghi@usi.ch}\\
 }
 
 \begin{document}
@@ -128,7 +129,7 @@
 	\section{Background}	
 	
 	\subsection{Generative Adversarial Networks (GANs)}\label{sec:gan}
-	Generative Adversarial Networks (GANs) \cite{goodfellow2014generative}, are deep-learning-based 
+	Generative Adversarial Networks (GANs) \cite{goodfellow2014generative} are deep-learning-based 
 	generative models which learn to determine whether a sample is from the model or the data 
 	distribution. 
 	The classic architecture, illustrated in Appendix \ref{subsec:app_background} in Figure 
@@ -308,7 +309,8 @@
 		u^d(X, Y )=\gamma (A(X, K, V)) \odot \omega (X) + \beta (A(X, K, V)) \mbox{,}
 	\end{equation}
 	where, two attention operations are compound on top of each other: first compute the \textit{soft 
-	attention} assignments between $X$ and $Y$, by $K = a(Y, X)$, and then refine the assignments by 
+		attention} assignments between $X$ and $Y$, by $K = a(Y, X)$, and then refine the assignments 
+		by 
 	considering their centroids, by $A(X, K, V)$. This is analogous to the \textit{k-means algorithm} and 
 	works more effectively than the simpler update $u^a$ defined above in Equation \eqref{eqn:simplex}.
 	
@@ -320,13 +322,13 @@
 	
 	\section{Implementation}
 	
-	The code has been implemented using the code and the information provided by the authors.
-	
-	%TODO
-	
-	\textcolor{red}{Briefly describe what you did and which resources did you use. E.g. Did you use 
-	author's code, did you re-implement parts of the pipeline, how much time did it take to produce the 
-	results, what hardware you were using and how long it took to train/evaluate. }
+	The code from the authors' has been merged with the code provided by StyleGAN2 to obtain a 
+	hybrid version of the
+	StyleGAN2 and the GANformer. In addition, we created a simplified version of the code which 
+	removed unnecessary
+	operations in the creation of the network that were used for other model architectures. Furthermore, 
+	we implemented a Google Colab Pro version of
+	the authors’ code, as we had access to a more powerful GPU.
 	
 	\subsection{Datasets}	\label{sec:dataset}
 	The original paper \cite{hudson2021generative} explored the GANformer model on four datasets for 
@@ -335,20 +337,28 @@
 	
 	Initially, we tried to use the Cityscapes dataset, since it is the smaller among the four: it contains 
 	24998 images with 256x256 resolution. 
-	However, the time to complete the training was to high on this dataset (\textcolor{red}{TODO: how 
-	much?}), even if using computational resources like GPU.
+	However, the memory required to complete the training was too high on this dataset (more than 
+	25Gb).
+	Even if we had more memory available, Colab Pro's limitation of 24 hours sessions would have 
+	interrupted our experiments prematurely.
 	
 	For this reason, we switch to another dataset, the Google Cartoon Set \cite{cartoonset}\footnote{	
-	\url{https://google.github.io/cartoonset}}, containing 10k 2D cartoon avatar 
+		\url{https://google.github.io/cartoonset}}, containing 10k 2D cartoon avatar 
 	images with 64x64 resolution, composed of 16 components that vary in 10 artwork attributes, 4 
 	colour attributes, and 4 proportion attributes (see Table \ref{tab:dataset} in Appendix 
 	\ref{subsec:app_dataset}). 
 	
-	\subsection{Hyper-parameters}\label{sec:hyperparam}%TODO fixme
+	\subsection{Hyper-parameters}\label{sec:hyperparam}
+	In this section we present the relevant hyper-parameters used in our experimentation, both for 
+	training and also in terms of layer sizes and technical choices.\\
+	Table 1 contains a comparison between Stylegan2(the baseline) and the novel networks proposed in 
+	the original paper.\\
+	Note that in the code provided by the author \cite{hudson2021generative}, the 
+	hyper-parameters are not the same mentioned in the article.
 	
 	\begin{table}[htb]
 		\centering
-		\caption{}
+		\caption{Hyperparameters (Including comparison between given code and paper statements)}
 		\label{tab:hyper}
 		\vspace{3mm}
 		\small
@@ -374,16 +384,14 @@
 			0.99                                                        & 0.999                                                                & 
 			0.999                                                               \\
 			epsilon         & 1e-8      & 1e-8                                                         & 
-			1e-8                                                        & 1e-3       \\ 
-			\bottomrule                                                          & 
-			1e-3                                                               
+			1e-8                                                        & 1e-3                                                                & 
+			1e-3                            \\ \bottomrule                                    
 		\end{tabular}
 	\end{table}
 	
-	Note that in the code provided by the author \cite{hudson2021generative}, the 
-	hyper-parameters are not the same mentioned in the article.
 	
-	%TODO 
+	Network choices
+	
 	A \textit{kernel size} of $k = 3$ is used after each application of the attention, together with a 
 	\textit{Leaky ReLU non-linearity} after each convolution and then upsample or downsample the 
 	features $X$, as part of the generator or discriminator respectively, as in e.g. StyleGAN2 
@@ -572,7 +580,7 @@
 	\begin{figure*}[htpb]				
 		\centering
 		\raggedleft
-		\includegraphics[width=.8\linewidth]{../src/trained_network/out_imgs/FIDscore.pdf}
+		\includegraphics[width=.8\linewidth]{FIDscore.pdf}
 		\caption{\textbf{Comparison between the StyleGAN2 and the GANformer models.} We evaluate 
 			the models according to FID score along 300k image samples. The score is computed every 
 			sixteen checkpoints.}
@@ -597,70 +605,6 @@
 	seeds to create latent inputs and shown the resulting images generated by the baseline 
 	StyleGAN2 and all four presented variations of the GANformer in Figures \ref{fig:random} and 
 	\ref{fig:interpolation}.
-	\begin{figure}[htpb]
-		\centering
-		\begin{subfigure}{\linewidth}
-			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/random_Stylegan2_300kimg.png}
-			\vspace{-7mm}
-			\caption{StyleGAN2.} 
-		\end{subfigure}
-		\begin{subfigure}{\linewidth}
-			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/random_GANFormer_Simplex_D_Stylegan2_300kimg.png}
-			\vspace{-7mm}
-			\caption{GANformer with Simplex attention and vanilla StyleGAN2 discriminator.}
-		\end{subfigure}
-		\begin{subfigure}{\linewidth}
-			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/random_GANFormer_Simplex_D_Att_300kimg.png}
-			\vspace{-7mm}
-			\caption{GANformer with Simplex attention.}
-		\end{subfigure}
-		\begin{subfigure}{\linewidth}
-			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/random_GANFormer_Duplex_D_Stylegan2_300kimg.png}
-			\vspace{-7mm}
-			\caption{GANformer with Duplex attention and vanilla StyleGAN2 discriminator.}
-		\end{subfigure}
-		\begin{subfigure}{\linewidth}
-			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/random_GANFormer_Duplex_D_Att_300kimg.png}
-			\vspace{-7mm}
-			\caption{GANformer with Duplex attention.}
-		\end{subfigure}
-		\vspace{3mm}
-		\caption{\textbf{Visualisation of 9 images generated with the various models}.}\label{fig:random}
-	\end{figure}
-	
-	
-	\begin{figure}[htpb]
-		\centering
-		\begin{subfigure}{\linewidth}
-			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/interpolation_Stylegan2_300kimg.png}
-			\vspace{-7mm}
-			\caption{StyleGAN2.} 
-		\end{subfigure}
-		\begin{subfigure}{\linewidth}
-			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/interpolation_GANFormer_Simplex_D_Stylegan2_300kimg.png}
-			\vspace{-7mm}
-			\caption{GANformer with Simplex attention and vanilla StyleGAN2 discriminator.}
-		\end{subfigure}
-		\begin{subfigure}{\linewidth}
-			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/interpolation_GANFormer_Simplex_D_Att_300kimg.png}
-			\vspace{-7mm}
-			\caption{GANformer with Simplex attention.}
-		\end{subfigure}
-		\begin{subfigure}{\linewidth}
-			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/interpolation_GANFormer_Duplex_D_Stylegan2_300kimg.png}
-			\vspace{-7mm}
-			\caption{GANformer with Duplex attention and vanilla StyleGAN2 discriminator.}
-		\end{subfigure}
-		\begin{subfigure}{\linewidth}
-			\includegraphics[width=\linewidth]{../src/trained_network/out_imgs/interpolation_GANFormer_Duplex_D_Att_300kimg.png}
-			\vspace{-7mm}
-			\caption{GANformer with Duplex attention.}
-		\end{subfigure}
-		\vspace{3mm}
-		\caption{\textbf{Simple $\mathbf{z}$ interpolation using of the various models}.} 
-		\label{fig:interpolation}
-	\end{figure}
-	
 	
 	It is blatantly obvious that the Duplex GANformer implementation is not capable of performing the 
 	task at hand, while all other models are at least able to produce visually compelling results.
@@ -728,7 +672,7 @@
 	the presented 
 	Generator but substituting the hypothetically valid discriminator network with a vanilla StyleGAN 
 	discriminator.
-	To our surprize the StyleGAN/GANformer hybrid did perform significantly better than the baseline, 
+	To our surprise the StyleGAN/GANformer hybrid did perform significantly better than the baseline, 
 	proving, 
 	in our opinion the suspected behaviour of the original code.
 	% explaination missing
@@ -742,9 +686,78 @@
 	over four quality metrics.
 	\section{Authors contribution}
 	
+	
+	
+	
+	\begin{figure}[htpb]
+		\centering
+		\begin{subfigure}{\linewidth}
+			\includegraphics[width=\linewidth]{random_Stylegan2_300kimg.png}
+			\vspace{-7mm}
+			\caption{StyleGAN2.} 
+		\end{subfigure}
+		\begin{subfigure}{\linewidth}
+			\includegraphics[width=\linewidth]{random_GANFormer_Simplex_D_Stylegan2_300kimg.png}
+			\vspace{-7mm}
+			\caption{GANformer with Simplex attention and vanilla StyleGAN2 discriminator.}
+		\end{subfigure}
+		\begin{subfigure}{\linewidth}
+			\includegraphics[width=\linewidth]{random_GANFormer_Simplex_D_Att_300kimg.png}
+			\vspace{-7mm}
+			\caption{GANformer with Simplex attention.}
+		\end{subfigure}
+		\begin{subfigure}{\linewidth}
+			\includegraphics[width=\linewidth]{random_GANFormer_Duplex_D_Stylegan2_300kimg.png}
+			\vspace{-7mm}
+			\caption{GANformer with Duplex attention and vanilla StyleGAN2 discriminator.}
+		\end{subfigure}
+		\begin{subfigure}{\linewidth}
+			\includegraphics[width=\linewidth]{random_GANFormer_Duplex_D_Att_300kimg.png}
+			\vspace{-7mm}
+			\caption{GANformer with Duplex attention.}
+		\end{subfigure}
+		\vspace{3mm}
+		\caption{\textbf{Visualisation of 9 images generated with the various models}.}\label{fig:random}
+	\end{figure}
+	
+	
+	\begin{figure}[htpb]
+		\centering
+		\begin{subfigure}{\linewidth}
+			\includegraphics[width=\linewidth]{interpolation_Stylegan2_300kimg.png}
+			\vspace{-7mm}
+			\caption{StyleGAN2.} 
+		\end{subfigure}
+		\begin{subfigure}{\linewidth}
+			\includegraphics[width=\linewidth]{interpolation_GANFormer_Simplex_D_Stylegan2_300kimg.png}
+			\vspace{-7mm}
+			\caption{GANformer with Simplex attention and vanilla StyleGAN2 discriminator.}
+		\end{subfigure}
+		\begin{subfigure}{\linewidth}
+			\includegraphics[width=\linewidth]{interpolation_GANFormer_Simplex_D_Att_300kimg.png}
+			\vspace{-7mm}
+			\caption{GANformer with Simplex attention.}
+		\end{subfigure}
+		\begin{subfigure}{\linewidth}
+			\includegraphics[width=\linewidth]{interpolation_GANFormer_Duplex_D_Stylegan2_300kimg.png}
+			\vspace{-7mm}
+			\caption{GANformer with Duplex attention and vanilla StyleGAN2 discriminator.}
+		\end{subfigure}
+		\begin{subfigure}{\linewidth}
+			\includegraphics[width=\linewidth]{interpolation_GANFormer_Duplex_D_Att_300kimg.png}
+			\vspace{-7mm}
+			\caption{GANformer with Duplex attention.}
+		\end{subfigure}
+		\vspace{3mm}
+		\caption{\textbf{Simple $\mathbf{z}$ interpolation using of the various models}.} 
+		\label{fig:interpolation}
+	\end{figure}
+	
+	
 	\clearpage
 	\appendix
 	\section{Appendix}\label{sec:appendix}
+	
 	
 	\subsection{Methodology background} \label{subsec:app_background}
 	
@@ -827,7 +840,7 @@
 	to the final network.
 	\begin{figure*}[htb]				
 		\centering
-		\includegraphics[width=.9\linewidth]{images/styleGAN2}
+		\includegraphics[width=.9\linewidth]{images/StyleGAN2}
 		\caption{\textbf{StyleGAN2 architecture.} Evolution from a StyleGAN to a StyleGAN2 synthesis 
 			network.}
 		\label{fig:StyleGAN2}
