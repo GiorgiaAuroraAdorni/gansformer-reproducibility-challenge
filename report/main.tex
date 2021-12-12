@@ -133,7 +133,8 @@
 	various changes made to the original architecture up to the final StyleGAN2 network. Further 
 	information is provided in Appendix \ref{subsec:app_background}.
 	
-	The StyleGAN2 architecture makes it possible to control the image synthesis via scale-specific modifications to the styles. In particular, this approach attains layer-wise decomposition of visual 
+	The StyleGAN2 architecture makes it possible to control the image synthesis via scale-specific 
+	modifications to the styles. In particular, this approach attains layer-wise decomposition of visual 
 	properties, allowing StyleGAN to control global aspects of the picture such as pose, lighting 
 	conditions or colour schemes, in a coherent manner over the entire image.
 	
@@ -146,8 +147,10 @@
 	designed 
 	to handle sequential input data and evaluate the relationship between each input-output item 
 	\cite{vaswani2017attention}.
-	This model, unlike Recurrent Neural Networks (RNNs), avoids using convolutions or aligned sequences, and do not necessarily require ordered input data to be processed. 
-	The architecture is composed by an \textit{encoder-decoder} structure where, the {encoder} maps an input sequence of symbol representations $(x_1,\dots, x_n)$ to a sequence of continuous 
+	This model, unlike Recurrent Neural Networks (RNNs), avoids using convolutions or aligned 
+	sequences, and do not necessarily require ordered input data to be processed. 
+	The architecture is composed by an \textit{encoder-decoder} structure where, the {encoder} maps 
+	an input sequence of symbol representations $(x_1,\dots, x_n)$ to a sequence of continuous 
 	representations $z = (z_1, \dots, z_n)$, while the  {decoder}, given $z$, generates an output 
 	sequence $(y_1, \dots, y_m)$ of symbols one element at a time. 
 	Each transformer module (encoder-decoder) is connected to each other via feed-forward
@@ -156,10 +159,13 @@
 	The details about how an attention function works are reported in Appendix 
 	\ref{subsec:app_background}. 
 	
-	\citet{vaswani2017attention}used multiple multi-head attentions stacked on top of each other, enabling to pass multiple input sequences simultaneously, instead of one at a time, allowing for more parallelisation and reducing training times if one has access to sufficient computational resources.
+	\citet{vaswani2017attention}used multiple multi-head attentions stacked on top of each other, 
+	enabling to pass multiple input sequences simultaneously, instead of one at a time, allowing for 
+	more parallelisation and reducing training times if one has access to sufficient computational 
+	resources.
 	
 	\section{Methodology: Generative Adversarial Transformers}\label{sec:ganformer}
-		%	In this section you should give a description of the methodological aspects of your work, for 
+	%	In this section you should give a description of the methodological aspects of your work, for 
 	%	instance how you modified an existing method to perform a particular task or to overcome a 
 	%	particular limitation. If your project is about reproducibility, here you should describe the method 
 	%	presented in the original paper.
@@ -236,7 +242,8 @@
 	
 	Formally, let $X^{n\times d}$ denote an input set of $n$ vectors of dimension $d$ — where, for the 
 	image case, $n = W\times H$ — and $Y^{m\times d}$ denote a set of $m$ aggregator variables — 
-	the latent variables, in the generative case. Specifically, the attention is computed over the derived bipartite 
+	the latent variables, in the generative case. Specifically, the attention is computed over the derived 
+	bipartite 
 	graph between these two groups of elements, as in Equation \eqref{eqn:attention}, moreover:
 	\begin{equation}
 		\label{eqn:attention2}
@@ -262,8 +269,10 @@
 	where $\gamma(\cdot), \beta(\cdot)$ are mappings that compute multiplicative and additive styles 
 	(gain and bias), maintaining dimensionality $d$, and $\omega (X) = X- \mu(X)$ normalises each 
 	element with $\sigma(X)$ respect to the other features. By normalising $X$ (image features), and 
-	then letting $Y$ (latent vectors) control the statistical tendencies of $X$, the information propagation from 
-	$Y$ to $X$ is enabled, allowing the latent vectors to control the visual generation of spatial attended 
+	then letting $Y$ (latent vectors) control the statistical tendencies of $X$, the information 
+	propagation from 
+	$Y$ to $X$ is enabled, allowing the latent vectors to control the visual generation of spatial 
+	attended 
 	regions within the image, so as to guide the synthesis of objects or entities.
 	The multiplicative integration permits significant gains in the model performance. 
 	
@@ -281,12 +290,14 @@
 	\end{equation}
 	where, two attention operations are compound on top of each other: first compute the \textit{soft 
 		attention} assignments between $X$ and $Y$, by $K = a(Y, X)$, and then refine the assignments 
-		by 
+	by 
 	considering their centroids, by $A(X, K, V)$. This is analogous to the \textit{k-means algorithm} and 
 	works more effectively than the simpler update $u^a$ defined above in Equation \eqref{eqn:simplex}.
 	
-	Finally, to support bidirectional interaction between $X$ and $Y$ (the image and the latent vectors), two 
-	reciprocal simplex attentions are chained from $X$ to $Y$ and from $Y$ to $X$, obtaining the duplex 
+	Finally, to support bidirectional interaction between $X$ and $Y$ (the image and the latent vectors), 
+	two 
+	reciprocal simplex attentions are chained from $X$ to $Y$ and from $Y$ to $X$, obtaining the 
+	duplex 
 	attention, which alternates computing $Y :=u^a(Y,X)$ and $X:=u^d(X,Y)$, such that each 
 	representation is refined in light of its interaction with the other, integrating together bottom-up and 
 	top-down interactions.
@@ -332,8 +343,9 @@
 	\begin{table}[htb]
 		\centering
 		\caption{\textbf{Comparison of the hyper-parameters given in the code with those mentioned in 
-		the paper statements}. $\mbox{GANformer}_{s}$ refers to the GANformer with Simplex attention, 
-		while $\mbox{GANformer}_{d}$ refers to the GANformer with duplex attention.}
+				the paper statements}. $\mbox{GANformer}_{s}$ refers to the GANformer with Simplex 
+				attention, 
+			while $\mbox{GANformer}_{d}$ refers to the GANformer with duplex attention.}
 		\label{tab:hyper}
 		\vspace{3mm}
 		\small
@@ -437,20 +449,30 @@
 	
 	
 	\section{Results}\label{sec:results}
-	This section shows and comments on our results while also comparing them to the original GANformer 
-	paper. We start by evaluating the two presented variations of the GANformer and StyleGAN2 over a set 
+	This section shows and comments on our results while also comparing them to the original 
+	GANformer 
+	paper. We start by evaluating the two presented variations of the GANformer and StyleGAN2 over a 
+	set 
 	of four metrics: Frechet Inception Distance (FID), Inception Score (IS), Precision and Recall. The FID 
-	is one of the most popular metrics for evaluating GANs, providing stable and reliable image fidelity and 
-	diversity indications. It is a measure of similarity between curves that considers the location and ordering 
-	of the points along the curves. FID is used to measure the feature distance between the real and the generated 
-	images for this specific application. However, it can also be used to measure the distance between two distributions.
+	is one of the most popular metrics for evaluating GANs, providing stable and reliable image fidelity 
+	and 
+	diversity indications. It is a measure of similarity between curves that considers the location and 
+	ordering 
+	of the points along the curves. FID is used to measure the feature distance between the real and the 
+	generated 
+	images for this specific application. However, it can also be used to measure the distance between 
+	two distributions.
 	
-    For this reason, we have decided to use it as a reference metric for all the following analyses. In Table 2, we compared the GANformer (Simplex and Duplex) with the competing StyleGAN2 model. To have a fair comparison, the three image synthesis methods are run for the same amount of iterations and the same dataset. To express the improvement over StyleGAN2, a difference factor of FID is positioned alongside the scores. 
+	For this reason, we have decided to use it as a reference metric for all the following analyses. In 
+	Table 2, we compared the GANformer (Simplex and Duplex) with the competing StyleGAN2 model. 
+	To have a fair comparison, the three image synthesis methods are run for the same amount of 
+	iterations and the same dataset. To express the improvement over StyleGAN2, a difference factor of 
+	FID is positioned alongside the scores. 
 	\begin{table}[htb]
 		\centering
 		\caption{\textbf{Comparison between the GANformer (Simplex and Duplex) and competing 
 				StyleGAN2}. In the last column, is reported the percentage of improvement all the models, in 
-				terms 
+			terms 
 			of FID score, with respect to the baseline StyleGAN2 architecture.}
 		\label{tab:our-results}
 		\vspace{3mm}
@@ -460,9 +482,10 @@
 			\textbf{Model}  & \textbf{FID $\downarrow$}  & \textbf{IS $\uparrow$} & 
 			\textbf{Precision$\uparrow$}  & \textbf{Recall $\uparrow$} & \textbf{FID Improvement (\%)}\\ 
 			\midrule
-			StyleGAN2                    &  \textbf{24.77} & 2.50 & 0.00 & \textbf{0.02} & \textbf{0 \%} \\ 
-			GANformer, Simplex attention & 28.11 & \textbf{2.58} & 0.00 & 0.01 & -13.47 \%\\ 
-			GANformer, Duplex attention  & 374.18 & 1.40 & 0.00 & 0.00 & -1410.47 \% \\ 
+			StyleGAN2                    &  \textbf{24.77} & 2.50 & \textbf{0.0018} & \textbf{0.0211} & \textbf{0 
+			\%} \\ 
+			GANformer, Simplex attention & 28.11 & \textbf{2.58} & 0.0015 & 0.0076 & -13.47 \%\\ 
+			GANformer, Duplex attention  & 374.18 & 1.40 & 0.0000 & 0.0000 & -1410.47 \% \\ 
 			\bottomrule
 		\end{tabular}
 	\end{table}
@@ -476,7 +499,7 @@
 		\centering
 		\caption{\textbf{Original paper's reported results (mean of results over the 4 datasets used by the 
 				authors)}. In the last column, is reported the percentage of improvement all the models, in 
-				terms 
+			terms 
 			of FID score, with respect to the baseline StyleGAN2 architecture.}
 		\label{tab:orig-results}
 		\vspace{3mm}
@@ -506,7 +529,7 @@
 		\centering
 		\caption{\textbf{Comparison between the GANformer (Simplex and Duplex) both with and without 
 				attention on the Discriminator and competing StyleGAN2}.  In the last column, is reported 
-				the 
+			the 
 			percentage of improvement all the models, in terms of FID score, with respect to the baseline 
 			StyleGAN2 architecture.}
 		\label{tab:our-results2}
@@ -518,13 +541,13 @@
 			\textbf{Model}  & \textbf{FID $\downarrow$}  & \textbf{IS $\uparrow$} & 
 			\textbf{Precision$\uparrow$}  & \textbf{Recall $\uparrow$} & \textbf{FID Improvement (\%)}\\ 
 			\midrule
-			StyleGAN2                    &  24.77 & 2.50 & 0.00 & 0.02 & 0 \%\\ 
-			GANformer, Simplex attention & 28.11 & 2.58 & 0.00 & 0.01 & -13.47 \%\\ 
-			GANformer, Duplex attention  & 374.18 & 1.40 & 0.00 & 0.00 & -1410.47  \%\\ 
-			GANformer, Simplex attention (StyleGAN2 disc.) & \textbf{19.09} &  \textbf{2.62}  &  0.00    & 
-			\textbf{0.05}  & 
-			\textbf{+22.93 \%} \\ 
-			GANformer, Duplex attention (StyleGAN2 disc.)  &  24.81  & \textbf{2.62} &   0.00   & 0.02 & 
+			StyleGAN2                    &  24.77 & 2.50 & 0.0018 & 0.0211 & 0 \%\\ 
+			GANformer, Simplex attention & 28.11 & 2.58 & 0.0015 & 0.0076 & -13.47 \%\\ 
+			GANformer, Duplex attention  & 374.18 & 1.40 & 0.0000 & 0.0000 & -1410.47  \%\\ 
+			GANformer, Simplex attention (StyleGAN2 disc.) & \textbf{19.09} &  \textbf{2.62}  &  
+			\textbf{0.0035}    & \textbf{0.0476}  & \textbf{+22.93 \%} \\ 
+			GANformer, Duplex attention (StyleGAN2 disc.)  &  24.81  & \textbf{2.62} &   \textbf{0.0035}   
+			& 0.0211 & 
 			-0.14 \%\\ 
 			\bottomrule
 		\end{tabular}
@@ -643,7 +666,8 @@
 	of the cartoon face, which will make the discriminator unable to accurately tell the difference 
 	between a fake image and a real image. Furthermore, the generator tries to maximise the 
 	discriminator's output for the generated fake image \cite{gulrajani_improved_2017, 
-	arjovsky_wasserstein_2017}, which will create shapes that are close to what the discriminator sees 
+		arjovsky_wasserstein_2017}, which will create shapes that are close to what the discriminator 
+		sees 
 	from the real images confusing the discriminator from differentiating fake and real images.
 	
 	In conclusion, we have successfully reproduced the ``\emph{Generative Adversarial Transformers}'' 
@@ -884,7 +908,7 @@
 	
 	The BERT \textit{transformer network} \cite{devlin2019bert} interleaves \textit{multi-head 
 		self-attention} and \textit{feed-forward layers}. Each pair of self-attention and feed-forward 
-		layers is 
+	layers is 
 	intended as a \textit{transformer layer}, hence, a transformer is a stack of several such layers. 
 	
 	The \textit{self-attention layer} considers all pairwise relations among the input elements, so to 
@@ -1014,7 +1038,6 @@
 		\caption{\textbf{Visualisation of 9 images generated with the various models}.}\label{fig:random}
 	\end{figure}
 	
-	
 	\begin{figure}[htpb]
 		\centering
 		\begin{subfigure}{\linewidth}
@@ -1047,12 +1070,9 @@
 		\label{fig:interpolation}
 	\end{figure}
 	
-	
 	\clearpage
 	\bibliography{bibliography}
 	\bibliographystyle{unsrtnat}
 	\clearpage
-	
-	
 	
 \end{document}
