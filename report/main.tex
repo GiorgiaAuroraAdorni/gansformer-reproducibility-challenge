@@ -453,33 +453,20 @@ variations of the GANformer, training took around 10 h.
 
 
 \section{Results}\label{sec:results}
-\comment{...}{All this section should be revised since we are using also another dataset}
+\comment{}{The all section should be revised since we are using also another dataset}
 
 This section shows and comments on our results while also comparing them to the original 
-GANformer 
-paper. We start by evaluating the two presented variations of the GANformer and StyleGAN2 over a 
-set 
-of four metrics: Frechet Inception Distance (FID), Inception Score (IS), Precision and Recall. The FID 
-is one of the most popular metrics for evaluating GANs, providing stable and reliable image fidelity 
-and 
-diversity indications. It is a measure of similarity between curves that considers the location and 
-ordering 
-of the points along the curves. FID is used to measure the feature distance between the real and the 
-generated 
-images for this specific application. However, it can also be used to measure the distance between 
-two distributions.
+GANformer paper. We start by evaluating the two presented variations of the GANformer and StyleGAN2 over a set of four metrics: Frechet Inception Distance (FID), Inception Score (IS), Precision and Recall. The FID is one of the most popular metrics for evaluating GANs, providing stable and reliable image fidelity and diversity indications. It is a measure of similarity between curves that considers the location and ordering of the points along the curves. FID is used to measure the feature distance between the real and the generated images for this specific application. However, it can also be used to measure the distance between two distributions.
+For this reason, we have decided to use it as a reference metric for all the following analyses. 
 
-For this reason, we have decided to use it as a reference metric for all the following analyses. In 
-Table 2, we compared the GANformer (Simplex and Duplex) with the competing StyleGAN2 model. 
+\section{Google Cartoon Set results}\label{sec:cartoon_results}
+Starting from the Google Cartoon Set, in Table \ref{tab:our-results}, we compared the GANformer (Simplex and Duplex) with the competing StyleGAN2 model. 
 To have a fair comparison, the three image synthesis methods are run for the same amount of 
 iterations and the same dataset. To express the improvement over StyleGAN2, a difference factor of 
 FID is positioned alongside the scores. 
 \begin{table}[htb]
 	\centering
-	\caption{\textbf{Comparison between the GANformer (Simplex and Duplex) and competing 
-			StyleGAN2}. In the last column, is reported the percentage of improvement all the models, in 
-		terms 
-		of FID score, with respect to the baseline StyleGAN2 architecture.}
+	\caption{\textbf{Comparison between the GANformer (Simplex and Duplex) and competing StyleGAN2}. In the last column, is reported the percentage of improvement all the models, in terms of FID score, with respect to the baseline StyleGAN2 architecture.}
 	\label{tab:our-results}
 	\vspace{3mm}
 	\small
@@ -488,16 +475,14 @@ FID is positioned alongside the scores.
 		\textbf{Model}  & \textbf{FID $\downarrow$}  & \textbf{IS $\uparrow$} & 
 		\textbf{Precision$\uparrow$}  & \textbf{Recall $\uparrow$} & \textbf{FID Improvement (\%)}\\ 
 		\midrule
-		StyleGAN2                    &  \textbf{24.77} & 2.50 & \textbf{0.0018} & \textbf{0.0211} & \textbf{0 
-		\%} \\ 
-		GANformer, Simplex attention & 28.11 & \textbf{2.58} & 0.0015 & 0.0076 & -13.47 \%\\ 
-		GANformer, Duplex attention  & 374.18 & 1.40 & 0.0000 & 0.0000 & -1410.47 \% \\ 
+		StyleGAN2                    				&  \textbf{24.77} & 2.50 & \textbf{0.0018} & \textbf{0.0211} & 0 \%\\ 
+		GANformer, Simplex attention & 28.11 & \textbf{2.58} & 0.0015 & 0.0076 & -13.48 \%\\ 
+		GANformer, Duplex attention  & 27.08 & 2.47 & \textbf{0.0018} & 0.0090 & -9.33  \%\\ 
 		\bottomrule
 	\end{tabular}
 \end{table}
 
-Unexpectedly, the novel GANformer with Duplex attention, is considerably worse than the baseline 
-on all aspects with a staggering -1410.47 \% deterioration in FID score.
+Unexpectedly, the novel GANformer with Duplex attention, is \remove{considerably} worse than the baseline on all aspects, \add{except the precision metric}, with a staggering -9.33 \% deterioration in FID score.
 To investigate this further, a similar representation is recreated in Table \ref{tab:orig-results} using 
 the original paper findings for the same metrics and with a mean of the scores spanning the four 
 used datasets.
@@ -525,10 +510,9 @@ used datasets.
 	\end{tabular}
 \end{table}
 
-It is noteworthy to state that in the code given by the authors, attention seems to be only optionally 
+It is noteworthy to state that, in the code given by the authors, attention seems to be only optionally 
 used in the discriminator and when analysing the pre-trained models provided, it is never used,
-prompting us to implement two variations of the GANformer not openly 
-discussed in \cite{hudson2021generative}.
+prompting us to implement two variations of the GANformer not openly discussed in \cite{hudson2021generative}.
 We use the GANformer paradigm for the generator and a vanilla StyleGAN2 discriminator and 
 obtain the results visible in Table \ref{tab:our-results2}.
 \begin{table}[htb]
@@ -539,80 +523,6 @@ obtain the results visible in Table \ref{tab:our-results2}.
 		percentage of improvement all the models, in terms of FID score, with respect to the baseline 
 		StyleGAN2 architecture.}
 	\label{tab:our-results2}
-	\vspace{3mm}
-	\small
-	\begin{tabular}{l|rrrrr}
-		\toprule
-		
-		\textbf{Model}  & \textbf{FID $\downarrow$}  & \textbf{IS $\uparrow$} & 
-		\textbf{Precision$\uparrow$}  & \textbf{Recall $\uparrow$} & \textbf{FID Improvement (\%)}\\ 
-		\midrule
-		StyleGAN2                    &  24.77 & 2.50 & 0.0018 & 0.0211 & 0 \%\\ 
-		GANformer, Simplex attention & 28.11 & 2.58 & 0.0015 & 0.0076 & -13.47 \%\\ 
-		GANformer, Duplex attention  & 374.18 & 1.40 & 0.0000 & 0.0000 & -1410.47  \%\\ 
-		GANformer, Simplex attention (StyleGAN2 disc.) & \textbf{19.09} &  \textbf{2.62}  &  
-		\textbf{0.0035}    & \textbf{0.0476}  & \textbf{+22.93 \%} \\ 
-		GANformer, Duplex attention (StyleGAN2 disc.)  &  24.81  & \textbf{2.62} &   \textbf{0.0035}   
-		& 0.0211 & 
-		-0.14 \%\\ 
-		\bottomrule
-	\end{tabular}
-\end{table}
-
-Due to the relevance of the FID metric, we compare all the created models score over iterations 
-number to both show quality of results over training steps in Figure \ref{fig:performance}.
-\begin{figure*}[htpb]				
-	\centering
-	\raggedleft
-	\includegraphics[width=.83\linewidth]{FIDscore.pdf}
-	\caption{\textbf{Comparison between the StyleGAN2 and the GANformer models.} We evaluate 
-		the models according to FID score along 300k image samples. The score is computed every 
-		sixteen checkpoints.}
-	\label{fig:performance}
-\end{figure*}
-
-As mentioned before, unexpectedly, the model that yields the better results in the original paper, is 
-overall the worst in our experiments.
-Not only the FID score is worse than the baseline StyleGAN2 at the final training step both for 
-simplex and duplex attention implementations but also claims about efficiency can not be verified.
-Models that include attention on the Generator only, instead, are faster in terms of steps to reach a 
-qualitative results when compared to the baseline.
-We believe that this behaviour explains the choices made by the authors in their GitHub publication 
-of the code.
-Moreover a comment has to be made on the claim of efficiency; both with and without attention on 
-the discriminator, a training step is considerably slower to be completed on the same resources 
-when compared to StyleGAN2.
-While the latter is capable of having a training speed of 10.9 images generated a second, all flavours 
-of the GANformer, in the best case, only yield 8.3 images generated a second.
-
-Finally, to visualise our findings less empirically, we have used random 
-seeds to create latent inputs and shown the resulting images generated by the baseline 
-StyleGAN2 and all four presented variations of the GANformer in Figures \ref{fig:random} and 
-\ref{fig:interpolation} in Appendix \ref{subsec:app_dataset_result}.
-An image generated by each variation is visible in Figure \ref{fig:summaryImgs}.
-
-\begin{figure}[htb]
-	\centering
-	\includegraphics[width=.9\linewidth]{imgAll}
-	\caption{\textbf{Simple $\mathbf{z}$ interpolation using of the various models}.} 
-	\label{fig:summaryImgs}
-\end{figure}
-
-It is blatantly obvious that the Duplex GANformer implementation is not capable of performing the 
-task at hand, while all other models are at least able to produce visually compelling results.
-Comparing all outputs to the real images in the original dataset, all except Duplex GANformer tend to 
-create similar results with only background colour differing for models with attention on the 
-generator.
-
-\comment{new results}{comment}
-
-\begin{table}[htb]
-	\centering
-	\caption{\textbf{Comparison between the GANformer (Simplex and Duplex) both with and without 
-	attention on the Discriminator and competing StyleGAN2}.  In the last column, is reported the 
-	percentage of improvement all the models, in terms of FID score, with respect to the baseline 
-	StyleGAN2 architecture.}
-	\label{tab:results_cartoon}
 	\vspace{3mm}
 	\small
 	\begin{tabular}{l|rrrrr}
@@ -632,7 +542,52 @@ generator.
 	\end{tabular}
 \end{table}
 
+Due to the relevance of the FID metric, we compare all the created models score over iterations 
+number to both show quality of results over training steps in Figure \ref{fig:performance}.\comment{}{check this figure}
+\begin{figure*}[htpb]				
+	\centering
+	\raggedleft
+	\includegraphics[width=.83\linewidth]{FIDscore.pdf}
+	\caption{\textbf{Comparison between the StyleGAN2 and the GANformer models.} We evaluate 
+		the models according to FID score along 300k image samples. The score is computed every 
+		sixteen checkpoints.}
+	\label{fig:performance}
+\end{figure*}
 
+As mentioned before, unexpectedly, the model that yields the better results in the original paper, is 
+\remove{overall the worst} \add{not the best} in our experiments.
+Not only the FID score is worse than the baseline StyleGAN2 at the final training step, both for 
+simplex and duplex attention implementations, but also claims about efficiency cannot be verified.
+Models which include attention on the generator only, however, are faster in terms of steps to reach a qualitative results when compared to the baseline.
+We believe that this behaviour explains the choices made by the authors in their GitHub publication 
+of the code.
+Moreover, a comment has to be made on the claim of efficiency: both with and without attention on 
+the discriminator, a training step is considerably slower to be completed on the same resources 
+when compared to StyleGAN2.
+While the latter is capable of having a training speed of 10.9 images generated a second, all flavours 
+of the GANformer, in the best case, only yield 8.3 images generated a second.
+
+Finally, to visualise our findings less empirically, we have used random seeds to create latent inputs and shown the resulting images generated by the baseline StyleGAN2 and all four presented variations of the GANformer in Figures \ref{fig:random} and \ref{fig:interpolation} in Appendix \ref{subsec:app_dataset_result}.
+An image generated by each variation is visible in Figure \ref{fig:summaryImgs}.
+
+\begin{figure}[htb]
+	\centering
+	\includegraphics[width=.9\linewidth]{imgAll}
+	\caption{\textbf{Simple $\mathbf{z}$ interpolation using of the various models}.} 
+	\label{fig:summaryImgs}
+\end{figure}
+
+It is blatantly obvious that the Duplex GANformer implementation is not capable of performing the 
+task at hand, while all other models are at least able to produce visually compelling results.
+Comparing all outputs to the real images in the original dataset, all except Duplex GANformer tend to 
+create similar results with only background colour differing for models with attention on the 
+generator.
+
+
+\section{FFHQ dataset results}\label{sec:ffhq_results}
+For the FFHQ dataset, in Table \ref{tab:our-results_ffhq} we compared the two GANformer models, both with Duplex attention on the generator, one with attention on the discriminator too and the other with a vanilla StyleGAN2 discriminator.
+To have a fair comparison, the three image synthesis methods are run for the same amount of 
+iterations.
 \begin{table}[htb]
 	\centering
 	\caption{\textbf{Comparison between the GANformer Duplex both with and without attention on the Discriminator}.}
@@ -650,6 +605,7 @@ generator.
 	\end{tabular}
 \end{table}
 
+Once again, we can see that the model with multiple attention is considerably worse than the model with attention only in the generator. 
 
 \section{Discussion and conclusion}
 \comment{...}{All this section should be revised since we are using also another dataset}
