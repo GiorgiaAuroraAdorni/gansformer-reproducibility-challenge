@@ -489,9 +489,8 @@ used datasets.
 \begin{table}[htb]
 	\centering
 	\caption{\textbf{Original paper's reported results (mean of results over the 4 datasets used by the 
-			authors)}. In the last column, is reported the percentage of improvement all the models, in 
-		terms 
-		of FID score, with respect to the baseline StyleGAN2 architecture.}
+	authors)}. In the last column, is reported the percentage of improvement all the models, in terms 
+	of FID score, with respect to the baseline StyleGAN2 architecture.}
 	\label{tab:orig-results}
 	\vspace{3mm}
 	\small
@@ -518,10 +517,9 @@ obtain the results visible in Table \ref{tab:our-results2}.
 \begin{table}[htb]
 	\centering
 	\caption{\textbf{Comparison between the GANformer (Simplex and Duplex) both with and without 
-			attention on the Discriminator and competing StyleGAN2}.  In the last column, is reported 
-		the 
-		percentage of improvement all the models, in terms of FID score, with respect to the baseline 
-		StyleGAN2 architecture.}
+	attention on the Discriminator and competing StyleGAN2}.  In the last column, is reported the 
+	percentage of improvement all the models, in terms of FID score, with respect to the baseline 
+	StyleGAN2 architecture.}
 	\label{tab:our-results2}
 	\vspace{3mm}
 	\small
@@ -547,7 +545,7 @@ number to both show quality of results over training steps in Figure \ref{fig:pe
 \begin{figure*}[htpb]				
 	\centering
 	\raggedleft
-	\includegraphics[width=.83\linewidth]{FIDscore.pdf}
+	\includegraphics[width=.83\linewidth]{FIDscore-cartoonset.pdf}
 	\caption{\textbf{Comparison between the StyleGAN2 and the GANformer models.} We evaluate 
 		the models according to FID score along 300k image samples. The score is computed every 
 		sixteen checkpoints.}
@@ -585,12 +583,12 @@ generator.
 
 
 \section{FFHQ dataset results}\label{sec:ffhq_results}
-For the FFHQ dataset, in Table \ref{tab:our-results_ffhq} we compared the two GANformer models, both with Duplex attention on the generator, one with attention on the discriminator too and the other with a vanilla StyleGAN2 discriminator.
+For the FFHQ dataset, in Table \ref{tab:results_ffhq} we compared the two GANformer models, both with Duplex attention on the generator, one with attention on the discriminator too and the other with a vanilla StyleGAN2 discriminator.
 To have a fair comparison, the three image synthesis methods are run for the same amount of 
 iterations.
 \begin{table}[htb]
 	\centering
-	\caption{\textbf{Comparison between the GANformer Duplex both with and without attention on the Discriminator}.}
+	\caption{\textbf{Comparison between the GANformer Duplex both with and without attention on the Discriminator and competing StyleGAN2}. In the last column, is reported the percentage of improvement all the models, in terms of FID score, with respect to the baseline StyleGAN2 architecture.}
 	\label{tab:results_ffhq}
 	\vspace{3mm}
 	\small
@@ -599,13 +597,25 @@ iterations.
 		\textbf{Model}  & \textbf{FID $\downarrow$}  & \textbf{IS $\uparrow$} & 
 		\textbf{Precision$\uparrow$}  & \textbf{Recall $\uparrow$} & \textbf{FID Improvement (\%)}\\ 
 		\midrule
-		GANformer, Duplex attention  & {53.48} & 3.35 & 0.48& 0.0033 & ? \%\\ 
-		GANformer, Duplex attention (StyleGAN2 disc.)  &  \textbf{43.66}  & \textbf{3.61} &   \textbf{0.55}   & \textbf{0.0078} & ? \%\\ 
+		StyleGAN2                    				&  \textbf{40.22} &  &  &  & 0 \%\\ 
+		GANformer, Duplex attention  & {53.48} & 3.35 & 0.48& 0.0033 & -32.97 \%\\ 
+		GANformer, Duplex attention (StyleGAN2 disc.)  &  {43.66}  & \textbf{3.61} &   \textbf{0.55}   & \textbf{0.0078} & -{8.55} \%\\ 
 		\bottomrule
 	\end{tabular}
 \end{table}
 
 Once again, we can see that the model with multiple attention is considerably worse than the model with attention only in the generator. 
+
+\begin{figure*}[htpb]				
+	\centering
+	\raggedleft
+	\includegraphics[width=.83\linewidth]{FIDscore-ffhq.pdf}
+	\caption{\textbf{Comparison between the StyleGAN2 and the GANformer models.} We evaluate 
+	the models according to FID score along 300k image samples. The score is computed every 
+	sixteen checkpoints.}
+	\label{fig:performance-ffhq}
+\end{figure*}
+
 
 \section{Discussion and conclusion}
 \comment{...}{All this section should be revised since we are using also another dataset}
