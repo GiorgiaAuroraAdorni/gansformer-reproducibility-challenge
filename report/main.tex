@@ -306,7 +306,7 @@ representation is refined in light of its interaction with the other, integratin
 top-down interactions.
 
 \section{Implementation}
-\comment{...}{All this section should be revised since we are using also another dataset}
+\comment{}{All this section should be revised since we are using also another dataset}
 The code from the authors' has been merged with the code provided by StyleGAN2 to obtain a 
 hybrid version of the StyleGAN2 and the GANformer. In addition, we created a simplified version of the code which removed unnecessary operations in the creation of the network that were used for other model architectures. Furthermore, we implemented a Google Colab Pro version of the authors’ code, as we had access to a more powerful GPU.
 
@@ -316,7 +316,7 @@ images and scenes: CLEVR \cite{johnson2017clevr}, LSUN-Bedrooms \cite{yu2015lsun
 \cite{cordts2016cityscapes} and FFHQ \cite{karras2019style}. 
 
 Initially, we used the Cityscapes dataset since it is smaller among the four: it contains 
-24998 images with 256x256 resolution. 
+25k images with 256x256 resolution. 
 However, the memory required to complete the training was too high on this dataset (more than 
 25Gb).
 Even if we had more memory available, Colab Pro's limitation of 24 hours sessions would have 
@@ -326,11 +326,11 @@ For this reason, we switch to another dataset, the Google Cartoon Set \cite{cart
 	\url{https://google.github.io/cartoonset}}, containing 10k 2D cartoon avatar 
 images with 64x64 resolution, composed of 16 components that vary in 10 artwork attributes, 4 
 colour attributes, and 4 proportion attributes (see Table \ref{tab:dataset} in Appendix 
-\ref{subsec:app_dataset_result}). 
+\ref{sec:cartoon-results}). 
 
 After an initial examination of the result obtained with this dataset, we decided to proceed further using a more challenging dataset, the FFHQ, exploited in fact from the authors of the reproduced paper. 
-This dataset, presented by \citet{karras2019style}, is a collection 70k high-quality images of human faces at a $1024^2$, meaning that it offers a much higher quality and a vastly more variation, in terms of age, ethnicity, image background and coverage of accessories such as eyeglasses, sunglasses, hats, etc., than existing high-resolution datasets.
-\comment{todo}{add information about the resolution of the images and components maybe}
+This dataset, presented by \citet{karras2019style}, is a collection 70k high-quality images of human faces at a $1024×1024$ resolution, meaning that it offers a much higher quality and a vastly more variation in terms of age, ethnicity, image background and coverage of accessories such as eyeglasses, sunglasses, hats, etc., than existing high-resolution datasets.
+\comment{}{add information about the resolution that we choose and components maybe}
 
 
 \subsection{Hyper-parameters and design choices}\label{sec:hyperparam}
@@ -553,7 +553,7 @@ number to both show quality of results over training steps in Figure \ref{fig:pe
 \end{figure*}
 
 As mentioned before, unexpectedly, the model that yields the better results in the original paper, is 
-\remove{overall the worst} \add{not the best} in our experiments.
+not the best in our experiments.
 Not only the FID score is worse than the baseline StyleGAN2 at the final training step, both for 
 simplex and duplex attention implementations, but also claims about efficiency cannot be verified.
 Models which include attention on the generator only, however, are faster in terms of steps to reach a qualitative results when compared to the baseline.
