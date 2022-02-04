@@ -59,7 +59,7 @@ Stefano Carlo Lambertenghi\\
 	learning frameworks first appearing in the paper ``\emph{Generative adversarial nets}'' by 
 	\citet{goodfellow2014generative} that achieve the aforementioned goal. 
 	In our work, we reproduce and evaluate a novel variation of the original GAN network, the 
-	GANformer, proposed in ``\emph{Generative adversarial Transformers}'' by 
+	GANformer, proposed in ``\emph{Generative Adversarial Transformers}'' by 
 	\citet{hudson2021generative}. 
 	The goal of this project was to recreate the methods presented by this paper to reproduce the 
 	original results and comment on the authors’ claims. 
@@ -83,7 +83,7 @@ three of the computational experiments performed by the authors:
 \begin{enumerate*}
 	\item[(1)] the \textit{StyleGAN2} by \citet{karras2020analyzing,karras2019style}, a GAN 
 	network that uses one global latent style vector to modulate the features of each layer, hence 
-	controlling the style of all image features globally.
+	controlling the style of all image features globally,
 	\item[(2)] the \textit{GANformer} with \textit{Simplex Attention} by 
 	\citet{hudson2021generative}, which generalises the StyleGAN design with \textit{k} latent 
 	vectors that cooperate through attention. Thus, allowing for a spatially finer control over the 
@@ -92,7 +92,7 @@ three of the computational experiments performed by the authors:
 	particularly 
 	permitting communication in one direction, in the generative context – from the latent vectors to 
 	the 
-	image features.
+	image features,
 	\item[(3)] the \textit{GANformer} with \textit{Duplex Attention} by \citet{hudson2021generative}, 
 	which is based on the same principles as the previous but propagating information from 
 	global latent vectors to local image features, enabling both top-down and bottom-up reasoning to 
@@ -176,9 +176,7 @@ The Generative Adversarial Transformers (GANsformer), introduced by
 generate 
 better and more realistic examples.
 
-GANs, and in particular the StyleGAN2 model \cite{karras2020analyzing}, presented in Section 
-\ref{sec:StyleGAN}, %and shown in Figure \ref{fig:StyleGAN2}, 
-is used as a starting point for the 
+GANs, and in particular the StyleGAN2 model \cite{karras2020analyzing}, are used as a starting point for the 
 GANformer design for the properties it owns as CNN: they are powerful generators for the overall 
 style of the image, since by nature they merge the local information of the pixels together with the 
 general information regarding the image. 
@@ -239,7 +237,7 @@ on the direction in which information propagates,
 \end{enumerate*}
 
 \subsection{Simplex attention}
-\comment{The simplex and duplex attention layers and formulas are provided in the original article}{I'm not sure about keeping all the details regarding simplex and duplex attention since we can find these stuff exactly the same in the original paper. }
+%\comment{The simplex and duplex attention layers and formulas are provided in the original article}{I'm not sure about keeping all the details regarding simplex and duplex attention since we can find these stuff exactly the same in the original paper. }
 As already mentioned, simplex attention distributes information in a single direction over the 
 bipartite transformer graph. 
 
@@ -306,7 +304,6 @@ representation is refined in light of its interaction with the other, integratin
 top-down interactions.
 
 \section{Implementation}
-\comment{}{All this section should be revised since we are using also another dataset}
 The code from the authors' has been merged with the code provided by StyleGAN2 to obtain a 
 hybrid version of the StyleGAN2 and the GANformer. In addition, we created a simplified version of the code which removed unnecessary operations in the creation of the network that were used for other model architectures. Furthermore, we implemented a Google Colab Pro version of the authors’ code, as we had access to a more powerful GPU.
 
@@ -357,9 +354,9 @@ hyper-parameters are not the same as mentioned in the article.
 		\textbf{$\mbox{GANformer}_{d}$} (code) & \textbf{$\mbox{GANformer}_{s}$}  (article) & 
 		\textbf{$\mbox{GANformer}_{d}$} (article) \\
 		\midrule
-		\texttt{latent\_size}    & --    & 32   & 32    & 32    & 32 \\
-		\texttt{dlatent\_size}   & --    & 32   & 32    & 32    & 32  \\
-		\texttt{components\_num} & --    & 16   & 16    & 16    & 16   \\
+		\texttt{latent\_size}    & 512    & 32   & 32    & 32    & 32 \\
+		\texttt{dlatent\_size}   &512    & 32   & 32    & 32    & 32  \\
+		\texttt{components\_num} & 1    & 16   & 16    & 16    & 16   \\
 		\texttt{beta1}           & 0.0   & 0.0  & 0.0   & 0.9   & 0.9  \\
 		\texttt{beta2}           & 0.99  & 0.99 & 0.99  & 0.999 & 0.999  \\
 		\texttt{epsilon}         & 1e-8  & 1e-8 & 1e-8 &  1e-3  & 1e-3 \\
@@ -451,7 +448,7 @@ variations of the GANformer, training took around 10 h.
 
 
 \section{Results}\label{sec:results}
-\comment{}{The all section should be revised since we are using also another dataset}
+%\comment{}{The all section should be revised since we are using also another dataset}
 
 This section shows and comments on our results while also comparing them to the original 
 GANformer paper. We start by evaluating the two presented variations of the GANformer and StyleGAN2 over a set of four metrics: Frechet Inception Distance (FID), Inception Score (IS), Precision and Recall. The FID is one of the most popular metrics for evaluating GANs, providing stable and reliable image fidelity and diversity indications. It is a measure of similarity between curves that considers the location and ordering of the points along the curves. FID is used to measure the feature distance between the real and the generated images for this specific application. However, it can also be used to measure the distance between two distributions.
@@ -565,23 +562,15 @@ of the GANformer, in the best case, only yield 8.3 images generated a second.
 
 Finally, to visualise our findings less empirically, we have used random seeds to create latent inputs and shown the resulting images generated by the baseline StyleGAN2 and all four presented variations of the GANformer in Figures \ref{fig:random} and \ref{fig:interpolation} in Appendix \ref{sec:cartoon-results}.
 
-%TODO this is with the old images....
 An image generated by each variation is visible in Figure \ref{fig:summaryImgs}.
-%\begin{figure}[htb]
-%	\centering
-%	\includegraphics[width=.9\linewidth]{imgAll_TODO}
-%	\caption{\textbf{... using of the various models}.} 
-%	\label{fig:summaryImgs}
-%\end{figure}
+Here, the Simplex GANformer implementation with StyleGAN2 is the model that performs better, while we couldn't reproduce the same results as the original paper for the Duplex GANformer implementation. 
+In general, all the implementation are able to produce visually compelling results and comparing all outputs to the real images in the original dataset, all models tend to create similar results with only background colour differing for models with attention on the generator.
 \begin{figure}[htb]
 	\centering
 	\includegraphics[width=\linewidth]{imgAll}
-	\caption{\textbf{... using of the various models}.} 
+	\caption{\textbf{Generated images using of the various models}.} 
 	\label{fig:summaryImgs}
 \end{figure}
-
-\comment{It is blatantly obvious that the Duplex GANformer implementation is not capable of performing the task at hand, while all other models are at least able to produce visually compelling results.
-Comparing all outputs to the real images in the original dataset, all except Duplex GANformer tend to create similar results with only background colour differing for models with attention on the generator.}{not true}
 
 \section{FFHQ dataset results}\label{sec:ffhq_results}
 For the FFHQ dataset, in Table \ref{tab:results_ffhq} we compared the two GANformer models, both with Duplex attention on the generator, one with attention on the discriminator too and the other with a vanilla StyleGAN2 discriminator.
@@ -622,19 +611,16 @@ Once again, we can see that the model with multiple attention is considerably wo
 
 Finally, to visualise our findings less empirically, as for the previous dataset, we have used random seeds to create latent inputs and shown the resulting images generated by the baseline StyleGAN2 and all four presented variations of the GANformer in Figures \ref{fig:random-ffhq} and \ref{fig:interpolation-ffhq} in Appendix \ref{sec:ffhq-results}.
 
-%TODO this is with the old images....
-An image generated by each variation is visible in Figure \ref{fig:summaryImgs}.
-
+An image generated by each variation is visible in Figure \ref{fig:summaryImgs}. Even for this dataset, the simplex GANformer implementation with StyleGAN2 is the model that performs better. 
 \begin{figure}[htb]
 	\centering
 	\includegraphics[width=\linewidth]{ffhq-imgAll}
-	\caption{\textbf{... using of the various models}.} 
+	\caption{\textbf{Generated images using of the various models}.} 
 	\label{fig:summaryImgs-ffhq}
 \end{figure}
 
-\section{Discussion and conclusion}
-\comment{...}{All this section should be revised since we are using also another dataset}
 
+\section{Discussion and conclusion}
 %	Here you can express your judgments and draw your conclusions based on the  evidences 
 %	produced on the previous sections.
 %	
@@ -644,16 +630,15 @@ An image generated by each variation is visible in Figure \ref{fig:summaryImgs}.
 In this project we have discussed the replication of ``\emph{Generative adversarial Transformers}'' 
 by 
 \citet{hudson2021generative}.
-Contrary to our initial expectations, in our opinion, some of the claims made by the authors were 
-misleading or unproven in a scientific manner.
-Once we made this realisation, our methodology shifted from a pure reproduction of the results to a 
-search of undisclosed variations of the novel GANformer system in the published material trying to 
-obtain 
-results that were comparable to the given ones.
+%Contrary to our initial expectations, in our opinion, some of the claims made by the authors were 
+%misleading or unproven in a scientific manner.
+%Once we made this realisation, our methodology shifted from a pure reproduction of the results to a 
+%search of undisclosed variations of the novel GANformer system in the published material trying to 
+%obtain results that were comparable to the given ones.
 As mentioned in Section \ref{sec:comput_req}, our limited resources forced us to reduce the depth 
 of our experiments 
 compared to the authors'.
-We had to shift from four datasets to a single, size-reduced one: \citet{cartoonset}, significantly 
+We had to shift from four datasets to two, size-reduced ones: \citet{cartoonset}, significantly 
 decreasing the time of execution and the complexity of our research.
 For the same reasons, we have discarded four out of the five baselines: GAN, k-GAN, SAGAN and 
 VQGAN 
@@ -674,7 +659,7 @@ found a decrease both in time performance and quality.
 Believing it was an error arisen by our adaptation we have analysed the pre-trained models provided 
 and 
 noticed an alarming discrepancy between the code and the methodology discussed in the paper.
-In ``\emph{Generative adversarial Transformers}'' by \citet{hudson2021generative}, the attention 
+In ``\emph{Generative Adversarial Transformers}'' by \citet{hudson2021generative}, the attention 
 component 
 is said to be placed both on the generator and the discriminator sub-networks, while in all the 
 pre-trained 
@@ -696,15 +681,15 @@ the presented
 Generator but substituting the hypothetically valid discriminator network with a vanilla StyleGAN 
 discriminator.
 
-To our surprise, the StyleGAN/GANformer hybrid performed significantly better than the baseline. In 
-the case of duplex attention on the discriminator, we believe that introducing k-means will find the 
-centroid/mean of multiple regions of the cartoon face and merge them into one representative region 
-of the cartoon face, which will make the discriminator unable to accurately tell the difference 
-between a fake image and a real image. Furthermore, the generator tries to maximise the 
-discriminator's output for the generated fake image \cite{gulrajani_improved_2017, 
-	arjovsky_wasserstein_2017}, which will create shapes that are close to what the discriminator 
-	sees 
-from the real images confusing the discriminator from differentiating fake and real images.
+%To our surprise, the StyleGAN/GANformer hybrid performed significantly better than the baseline. In 
+%the case of duplex attention on the discriminator, we believe that introducing k-means will find the 
+%centroid/mean of multiple regions of the cartoon face and merge them into one representative region 
+%of the cartoon face, which will make the discriminator unable to accurately tell the difference 
+%between a fake image and a real image. Furthermore, the generator tries to maximise the 
+%discriminator's output for the generated fake image \cite{gulrajani_improved_2017, 
+%	arjovsky_wasserstein_2017}, which will create shapes that are close to what the discriminator 
+%	sees 
+%from the real images confusing the discriminator from differentiating fake and real images.
 
 In conclusion, we have successfully reproduced the ``\emph{Generative Adversarial Transformers}'' 
 by \citet{hudson2021generative} and found unexpected results.
@@ -713,35 +698,35 @@ takes inspiration from the
 novel GANformer and adapts it to produce images that score significantly higher than the baseline 
 over four quality metrics.
 
-\section{Authors contribution}
-\comment{review}{use the standard CRediT authorship contribution statement}
-All the authors analysed the original article and the code provided by the creators. 
-They took together all the important decisions, either regarding the organisation of the work and the 
-problems that have arisen.
-
-Stefano dealt with the dataset preparation and preprocessing phase. He also adapted the StyleGAN2 
-baseline for Colab and performed the training loop.
-
-Felix dealt with the given code and take charge of merging the StyleGAN2 and GANformer models, 
-adapting the code so that it reproduced carefully what was written in the paper.
-
-Stefano and Giorgia collaborated on the adaptation of the style transformer for StyleGAN2 and later 
-on the adaptation of the image visualisation for the GANformer, and in general with the generation 
-of images and videos. 
-
-Stefano and Felix worked together on the style mixing adaptation for the GANformer, and since only 
-they had available the GPU resources from Google Colab, they also handled with the models training.
-
-Stefano also concentrated on the code refactoring phase, mainly cleaning the code related to the 
-discriminator GANformer.
-
-Giorgia focused on the main conceptual ideas behind the original work, and performed a theoretical 
-research on the topic and related works. 
-Later she drafted this manuscript, with inputs from the other authors which provided critical 
-feedback on it. 
-
-All the authors discussed and interpret the results and finally contribute to the final version of this 
-article.
+%\section{Authors contribution}
+%\comment{review}{use the standard CRediT authorship contribution statement}
+%All the authors analysed the original article and the code provided by the creators. 
+%They took together all the important decisions, either regarding the organisation of the work and the 
+%problems that have arisen.
+%
+%Stefano dealt with the dataset preparation and preprocessing phase. He also adapted the StyleGAN2 
+%baseline for Colab and performed the training loop.
+%
+%Felix dealt with the given code and take charge of merging the StyleGAN2 and GANformer models, 
+%adapting the code so that it reproduced carefully what was written in the paper.
+%
+%Stefano and Giorgia collaborated on the adaptation of the style transformer for StyleGAN2 and later 
+%on the adaptation of the image visualisation for the GANformer, and in general with the generation 
+%of images and videos. 
+%
+%Stefano and Felix worked together on the style mixing adaptation for the GANformer, and since only 
+%they had available the GPU resources from Google Colab, they also handled with the models training.
+%
+%Stefano also concentrated on the code refactoring phase, mainly cleaning the code related to the 
+%discriminator GANformer.
+%
+%Giorgia focused on the main conceptual ideas behind the original work, and performed a theoretical 
+%research on the topic and related works. 
+%Later she drafted this manuscript, with inputs from the other authors which provided critical 
+%feedback on it. 
+%
+%All the authors discussed and interpret the results and finally contribute to the final version of this 
+%article.
 
 
 \clearpage
