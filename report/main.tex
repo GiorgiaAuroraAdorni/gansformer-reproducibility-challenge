@@ -601,10 +601,10 @@ iterations.
 		\textbf{Model}  & \textbf{FID $\downarrow$}  & \textbf{IS $\uparrow$} & 
 		\textbf{Precision$\uparrow$}  & \textbf{Recall $\uparrow$} & \textbf{FID Improvement (\%)}\\ 
 		\midrule
-		StyleGAN2                    				&  \textbf{40.22} &  &  &  & 0 \%\\ 
+		StyleGAN2                    				&  {40.22} &  &  &  & 0 \%\\ 
 		GANformer, Simplex attention & 45.71 & 3.35 &  0.55  &  0.0055 & -13.65 \%\\ 
 		GANformer, Duplex attention  & {53.48} & 3.35 & 0.48& 0.0033 & -32.97 \%\\ 
-		GANformer, Simplex attention (StyleGAN2 disc.)  &   &   &   &  &  \%\\ 
+		GANformer, Simplex attention (StyleGAN2 disc.)  &   \textbf{39.73}  & 3.49  &   &  &  \textbf{+1.22} \%\\ 
 		GANformer, Duplex attention (StyleGAN2 disc.)  &  {43.66}  & \textbf{3.61} &   \textbf{0.55}   & \textbf{0.0078} & -{8.55} \%\\ 
 		\bottomrule
 	\end{tabular}
@@ -744,6 +744,11 @@ feedback on it.
 
 All the authors discussed and interpret the results and finally contribute to the final version of this 
 article.
+
+
+\clearpage
+\bibliography{bibliography}
+\bibliographystyle{unsrtnat}
 
 \clearpage
 \appendix
@@ -1176,9 +1181,5 @@ that vary in 10 artwork attributes, 4 colour attributes, and 4 proportion attrib
 \end{figure}
 
 
-\clearpage
-\bibliography{bibliography}
-\bibliographystyle{unsrtnat}
-\clearpage
 
 \end{document}
