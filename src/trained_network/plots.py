@@ -91,13 +91,13 @@ plt.close()
 # FFHQ
 
 data_stylegan = pd.read_csv('scores/ffhq-fid-stylegan2.csv', delimiter=" ")
-# data_ganf_simp_n_att = pd.read_csv('scores/ffhq-fid-GanformerSimplexNoAtt.csv', delimiter=" ")
+data_ganf_simp_n_att = pd.read_csv('scores/ffhq-fid-GanformerSimplexNoAtt.csv', delimiter=" ")
 data_ganf_simp_att = pd.read_csv('scores/ffhq-fid-GanformerSimplexAtt.csv', delimiter=" ")
 data_ganf_dupl_n_att = pd.read_csv('scores/ffhq-fid-GanformerDuplexNoAtt.csv', delimiter=" ")
 data_ganf_dupl_att = pd.read_csv('scores/ffhq-fid-GanformerDuplexAtt.csv', delimiter=" ")
 
 labels = ["StyleGAN2",
-          # "GANformer, Simplex attention \n(Stylegan2 discriminator)",
+          "GANformer, Simplex attention \n(Stylegan2 discriminator)",
           "GANformer, Simplex attention",
           "GANformer, Duplex attention \n(Stylegan2 discriminator)",
           "GANformer, Duplex attention"]
@@ -106,8 +106,7 @@ labels = ["StyleGAN2",
 title = "Learning Performance"
 # Cross validation with 100 iterations to get smoother mean test and train
 # score curves, each time with 20% data randomly selected as a validation set.
-# data = [data_stylegan, data_ganf_simp_n_att, data_ganf_simp_att, data_ganf_dupl_n_att, data_ganf_dupl_att]
-data = [data_stylegan, data_ganf_simp_att, data_ganf_dupl_n_att, data_ganf_dupl_att]
+data = [data_stylegan, data_ganf_simp_n_att, data_ganf_simp_att, data_ganf_dupl_n_att, data_ganf_dupl_att]
 plot_learning_curve(data, labels, title)
 
 plt.savefig('out_imgs/FIDscore-ffhq.pdf', dpi=600, bbox_inches='tight')
